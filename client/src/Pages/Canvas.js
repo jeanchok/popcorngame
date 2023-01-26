@@ -4,79 +4,66 @@ import { useNavigate, useLocation, useParams } from "react-router-dom";
 import Header from "../Components/Header";
 import { socket } from "../context/socket";
 import Chat from "../Components/Chat";
+import PlayerList from "../Components/PlayerList";
+import ClearCanvasButton from "../Components/ClearCanvasButton";
+import Canva from "../Components/Canva";
+import Timer from "../Components/Timer";
 
 
 export function Canvas() {
     const { state } = useLocation();
     const [playersList, setPlayersList] = useState(state);
-    const contextRef = useRef(null);
+    const [playersListUpdatedScore, setPlayersListUpdatedScore] = useState();
+    const [time, setTime] = useState(0);
+    const [endTime, setEndTime] = useState(true);
+    const [score, setScore] = useState();
 
 
-    const {
-        canvasRef,
-        prepareCanvas,
-        startDrawing,
-        finishDrawing,
-        draw,
-    } = useCanvas();
+    socket.on('startTimer', ({ time }) => {
+        setEndTime(false);
+        setTime(time);
+    })
 
-    // socket.on('drawing', (data) => {
+    socket.on('updateScore', (data) => {
 
 
-    //     const { offsetX, offsetY } = data;
-    //     console.log(data);
-    //     contextRef.current.lineTo(offsetX, offsetY);
-    //     contextRef.current.stroke();
-    // })
-    // useEffect(() => {
+        let drawer = playersList.find(player => player.playerId === data.drawerID.name.playerId);
+        drawer.score = data.drawerID.score;
 
-    // }, []);
 
-    useEffect(() => {
-        prepareCanvas();
-    }, []);
+        let player = playersList.find(player => player.playerId === data.playerID);
+        player.score = data.score;
+        setPlayersList([...playersList]);
+    })
+
+
+    console.log("playersListconsole", playersList)
 
     return (
+
         <>
             <Header />
             <main className=' h-full m-auto'>
                 <img className='object-cover absolute h-screen w-screen bg-object bg-cover -z-10 top-0' src=".\img\capture intro yt gomaid.png" alt="popcorn rouge fond" />
                 <div className='bg-black/25 w-screen h-2/4 -z-10 absolute top-0'></div>
+
                 <section className='max-w-screen-xl m-auto bg-center center w-full h-full mt-9o
-                 flex content-center'>
-                    <div className='m-auto min-h-[70%] bg-white w-3/4 flex'>
+                 flex content-center items-center flex-col'>
+                    {time > 0 ? <Timer time={time} /> : null}
+                    <div className='m-auto min-h-[70%] bg-white flex'>
                         <div className='flex flex-col m-6 w-1/3'>
                             <div className='flex flex-col h-full'>
                                 <h2 className='text-red-500 bg-white font-semibold text-center pb-4 border-red-400 border-b-2 mb-4 text-xl font-semibold'>JOUEURS</h2>
-                                {/* <div className='h-full overflow-y-scroll scrollbar '> */}
                                 <ul className='h-full overflow-y-scroll scrollbar '>
-                                    {playersList.map((player, index) =>
-                                        <div key={index} className='ml-6 mb-2 flex w-9/10 h-14 bg-red-400'>
-                                            <div className='-ml-6 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-full w-14 m-auto overflow-hidden'>
-                                                <img className='object-cover bg' src=".\img\ponce.png" alt="" />
-                                            </div>
-                                            <h3 className='text-white m-auto items-center mr-4'>{player}</h3>
 
-                                        </div>
-                                    )}
+                                    <PlayerList playersList={playersList} />
+
+
+
                                 </ul>
-                                {/* </div> */}
-
                             </div>
                         </div>
-                        <div className='w-2/3 bg-red-600 w-full flex flex-col'>
-                            <h2 className='text-red-500 bg-white font-semibold text-center pb-4 pt-4 border-red-400 border-l-2 text-xl font-semibold'>CHOISIR LE JEU</h2>
-                            <div className='flex m-auto flex-col justify-between h-full w-full'>
-                                <div className=' flex flex-row m-auto justify-between mb-0 h-full w-full' >
-                                    <canvas className="h-full w-full bg-white"
-                                        onMouseDown={startDrawing}
-                                        onMouseUp={finishDrawing}
-                                        onMouseMove={draw}
-                                        ref={canvasRef}
-                                    />
-                                </div>
-                            </div>
-                        </div>
+                        <Canva key={playersList} playersList={playersList} />
                         <Chat />
                     </div>
                 </section>

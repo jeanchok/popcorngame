@@ -7,6 +7,7 @@ export const CanvasProvider = ({ children }) => {
     const [isDrawing, setIsDrawing] = useState(false)
     const canvasRef = useRef(null);
     const contextRef = useRef(null);
+    let RoomId = sessionStorage.getItem('id');
 
     const prepareCanvas = () => {
         const canvas = canvasRef.current
@@ -23,12 +24,21 @@ export const CanvasProvider = ({ children }) => {
         contextRef.current = context;
     };
 
-    const startDrawing = ({ nativeEvent }) => {
+    const startDrawing = async ({ nativeEvent }) => {
         const { offsetX, offsetY } = nativeEvent;
         contextRef.current.beginPath();
         contextRef.current.moveTo(offsetX, offsetY);
         setIsDrawing(true);
-        //socket.emit('drawing', { isDrawing: true, nativeEvent: { offsetX, offsetY } });
+
+        socket.emit('startDrawing', { RoomId: RoomId, nativeEvent: { offsetX, offsetY } }, console.log('yo'));
+        socket.on('startDrawing', (data) => {
+            console.log('yoo');
+            const { offsetX, offsetY } = data.nativeEvent;
+            contextRef.current.beginPath();
+            contextRef.current.moveTo(offsetX, offsetY);
+            setIsDrawing(true);
+        })
+        // await socket.emit('drawing', { RoomId: RoomId, isDrawing, nativeEvent: { offsetX, offsetY } });
         // socket.on('drawing', (data) => {
         //     if (data.isDrawing = true) {
         //         if (data.nativeEvent) {
@@ -40,12 +50,18 @@ export const CanvasProvider = ({ children }) => {
         // })
     };
 
-    const finishDrawing = () => {
+    const finishDrawing = async () => {
         contextRef.current.closePath();
         setIsDrawing(false);
-        // socket.emit('drawing', { isDrawing: false });
+
+        socket.emit('finishDrawing', RoomId, contextRef.current);
+        socket.on('finishDrawing', (data) => {
+            contextRef.current.closePath();
+            setIsDrawing(false);
+        })
+
+        // await socket.emit('drawing', { RoomId: RoomId, isDrawing });
         // socket.on('drawing', (data) => {
-        //     console.log(data)
         //     if (data.isDrawing = false) {
         //         contextRef.current.closePath();
         //         console.log('here')
@@ -54,22 +70,33 @@ export const CanvasProvider = ({ children }) => {
     };
 
     const draw = ({ nativeEvent }) => {
-        socket.on('drawing', (data) => {
-            if (data.nativeEvent) {
-                if (data.isDrawing = false) {
-                    return;
-                }
-                const { offsetX, offsetY } = data.nativeEvent;
-                contextRef.current.beginPath();
-                contextRef.current.moveTo(offsetX, offsetY);
-                contextRef.current.lineTo(offsetX, offsetY);
-                contextRef.current.stroke();
-                if (data.isDrawing = true) {
-                    contextRef.current.closePath();
-                }
-            }
+        // socket.on('drawing', (data) => {
+        //     if (data.nativeEvent) {
+        //         if (data.isDrawing = false) {
+        //             return;
+        //         }
+        //         const { offsetX, offsetY } = data.nativeEvent;
+        //         contextRef.current.beginPath();
+        //         contextRef.current.moveTo(offsetX, offsetY);
+        //         contextRef.current.lineTo(offsetX, offsetY);
+        //         contextRef.current.stroke();
+        //         if (data.isDrawing = true) {
+        //             //contextRef.current.closePath();
+        //         }
+        //     }
+        // })
 
+
+        socket.on('draw', (data) => {
+            // if (!isDrawing) {
+            //     return;
+            // }
+
+            const { offsetX, offsetY } = data.nativeEvent;
+            contextRef.current.lineTo(offsetX, offsetY);
+            contextRef.current.stroke();
         })
+
         if (!isDrawing) {
             return;
         }
@@ -78,15 +105,26 @@ export const CanvasProvider = ({ children }) => {
         contextRef.current.lineTo(offsetX, offsetY);
         contextRef.current.stroke();
 
-        socket.emit('drawing', { isDrawing, nativeEvent: { offsetX, offsetY } });
+        socket.emit('draw', { RoomId: RoomId, nativeEvent: { offsetX, offsetY } });
+        //socket.emit('drawing', { RoomId: RoomId, isDrawing, nativeEvent: { offsetX, offsetY } });
+
 
     };
 
-    const clearCanvas = () => {
+    const clearCanvas = async () => {
         const canvas = canvasRef.current;
-        const context = canvas.getContext("2d")
-        context.fillStyle = "white"
-        context.fillRect(0, 0, canvas.width, canvas.height)
+        const context = canvas.getContext("2d");
+        context.fillStyle = "white";
+        context.fillRect(0, 0, canvas.width, canvas.height);
+
+        socket.emit('clearCanvas', RoomId);
+        socket.on('clearCanvas', () => {
+            console.log('yoyoy');
+            const canvas = canvasRef.current;
+            const context = canvas.getContext("2d");
+            context.fillStyle = "white";
+            context.fillRect(0, 0, canvas.width, canvas.height);
+        })
     }
 
     return (

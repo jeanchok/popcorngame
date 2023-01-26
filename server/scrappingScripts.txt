@@ -1,0 +1,35 @@
+
+Script for scrapping french expressions from https://www.expressio.fr/toutes-les-expressions
+
+const phrases = [];
+
+var jsonData = [];
+
+phrases.forEach(phrase =>{
+  // Supprimer les espaces en trop de la phrase
+  phrase = phrase.trim();
+
+  // Supprimer les sauts de ligne de la phrase
+  phrase = phrase.replace(/\n/g, "");
+  
+   phrase  = phrase.replace(/'/g, `"`);
+
+
+  // Ajouter la phrase au fichier JSON
+  jsonData.push(phrase);
+});
+
+// Convertir l'objet JSON en chaîne de caractères et l'enregistrer dans un fichier
+var jsonString = JSON.stringify(jsonData);
+
+console.log(jsonString);
+jsonString = jsonString.slice(1, -1);
+
+// Diviser la chaîne en plusieurs éléments en utilisant les virgules comme séparateurs
+var elements = jsonString.split(",");
+
+// Retirer les apostrophes qui entourent chaque élément
+var validArray = elements.map(element => element.slice(1, -1));
+validArray = validArray.filter(element => element !== "");
+
+console.log(validArray);

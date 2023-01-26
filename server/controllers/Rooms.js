@@ -12,24 +12,21 @@ class Room {
     createPrivateRoom(playerUsername) {
         const { socket } = this;
         const id = uuidv4();
+        // let games = {};
         // games[id] = {
         //     rounds: 2,
         //     time: 40 * 1000,
-        //     customWords: [],
-        //     language: 'English',
         // };
         // games[id][socket.id] = {};
         // games[id][socket.id].score = 0;
-        // games[id][socket.id].name = player.name;
+        //games[id][socket.id].name = player.name;
         //games[id][socket.id].avatar = player.avatar;
         //console.log('games here', games);
 
-        console.log(playerUsername);
-        console.log(id);
         socket.playerUsername = playerUsername;
         socket.roomID = id;
         socket.join(id);
-        socket.emit('newPrivateRoom', { gameID: id, userName: playerUsername });
+        socket.emit('newPrivateRoom', { gameID: id, userName: playerUsername, id: socket.id });
         console.log('playerUsername', socket.playerUsername);
         console.log('done');
     }
@@ -42,11 +39,12 @@ class Room {
 
         // games[roomID][socket.id] = {};
         // games[roomID][socket.id].score = 0;
-        // games[roomID][socket.id].name = data.player.name;
+        //games[roomID][socket.id].name = data.player.name;
         // games[roomID][socket.id].avatar = data.player.avatar;
         socket.player = data.player;
         socket.join(roomID);
         socket.roomID = roomID;
+        data.playerId = socket.id;
         socket.to(roomID).emit('joinRoom', data);
         console.log(' data:', data, 'players:', io.sockets.adapter.rooms.get(roomID), 'socket', socket.player);
         socket.emit('otherPlayers',

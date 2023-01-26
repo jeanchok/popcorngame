@@ -6,6 +6,7 @@ import Canvas from './Pages/Canvas';
 import React from 'react';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ChatTest from './Pages/ChatTest';
+import TryDrawGPT from './Pages/TryDrawGPT';
 
 
 
@@ -18,6 +19,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Accueil />} />
+        <Route path="trygpt" element={<TryDrawGPT />} />
         <Route path="/chattest" element={<ChatTest />} />
         <Route path="*" element={<Accueil />} />
         <Route path="/room" element={<Room />} />

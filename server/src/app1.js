@@ -41,6 +41,8 @@
 
 // import { createRequire } from "module";
 // const require = createRequire(import.meta.url);
+//import { createRequire } from "module";
+//const require = createRequire(import.meta.url);
 
 const express = require("express");
 const app = express();
@@ -61,6 +63,10 @@ const io = new Server(server, {
     },
 });
 
+// import Room from '../controllers/Rooms.js';
+// import Canvas from '../controllers/Canvas.js';
+// import Game from '../controllers/Game.js';
+
 const Room = require('../controllers/Rooms.js');
 const Canvas = require('../controllers/Canvas');
 //const Disconnect = require('../controllers/Disconnect');
@@ -78,12 +84,21 @@ io.on("connection", (socket) => {
     socket.on('selectGame', async (data) => { await new Room(io, socket).selectGame(data); });
     socket.on('settingsUpdate', (data) => new Room(io, socket).updateSettings(data));
     socket.on('drawing', (data) => new Canvas(io, socket).broadcastDrawing(data));
-    socket.on('clearCanvas', () => new Canvas(io, socket).clearCanvas());
+    socket.on('clearCanvas', (data) => new Canvas(io, socket).clearCanvas(data));
     socket.on('startPicass', async (data) => { await new Game(io, socket).startPicass(data); });
     socket.on('startGame', async () => { await new Game(io, socket).startGame(); });
-    socket.on('getPlayers', async () => { await new Game(io, socket).getPlayers(); });
+    socket.on('getPlayers', async (roomID) => { await new Game(io, socket).getPlayers(roomID); });
+    // socket.on('choosenWord', async (data) => { await new Game(io, socket).chosenWord(data); });
     socket.on('message', (data) => new Game(io, socket).onMessage(data));
     // //socket.on('disconnect', () => new Disconnect(io, socket).onDisconnect());
+
+
+    socket.on('draw', (data) => new Canvas(io, socket).draw(data));
+    socket.on('startDrawing', (data) => new Canvas(io, socket).startDrawing(data));
+    socket.on('finishDrawing', (data) => new Canvas(io, socket).finishDrawing(data));
+    socket.on('changeColor', (data) => new Canvas(io, socket).changeColor(data));
+    socket.on('changeLineWidth', (data) => new Canvas(io, socket).changeLineWidth(data));
+
 });
 
 server.listen(port, () => console.log(`Listening on port ${port}`));

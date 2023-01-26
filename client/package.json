@@ -8,6 +8,8 @@
     "@testing-library/user-event": "^13.5.0",
     "axios": "^0.27.2",
     "express": "^4.18.1",
+    "intrinsic-scale": "^3.0.4",
+    "lazy-brush": "^2.0.1",
     "process": "^0.11.10",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

@@ -6,7 +6,6 @@ import { useNavigate, useSearchParams, useParams } from "react-router-dom";
 
 const JoinGame = () => {
     const [playerUsername, setPlayerUsername] = useState("");
-
     const [response, setResponse] = useState("");
     const [paramId, setParamId] = useState("");
     const navigate = useNavigate();

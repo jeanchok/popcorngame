@@ -5549,6 +5549,11 @@
     "has" "^1.0.3"
     "side-channel" "^1.0.4"
 
+"intrinsic-scale@^3.0.4":
+  "integrity" "sha512-K9+8JfjKhu4cl3kLBHrHW/RnAQFlyyOBV+zoSyzUM+vXz11ypaN+adk5PtI1pvMAuQN1zKnQ+lu9g7kDs/3hHw=="
+  "resolved" "https://registry.npmjs.org/intrinsic-scale/-/intrinsic-scale-3.0.4.tgz"
+  "version" "3.0.4"
+
 "ipaddr.js@^2.0.1":
   "integrity" "sha512-1qTgH9NG+IIJ4yfKs2e6Pp1bZg8wbDbKHT21HrLIeYBTRLgMYKnMTPAuI3Lcs61nfx5h1xlXnbJtH1kX5/d/ng=="
   "resolved" "https://registry.npmjs.org/ipaddr.js/-/ipaddr.js-2.0.1.tgz"
@@ -6611,6 +6616,11 @@
   "version" "1.0.5"
   dependencies:
     "language-subtag-registry" "~0.3.2"
+
+"lazy-brush@^2.0.1":
+  "integrity" "sha512-/COeFR4ErHRatuXkNjJrY1EXLWneno+Gs5RdrszbL7SXl+kx+OiBkS2am5AKB//faHpa43aijq2lgAJXxhDOUg=="
+  "resolved" "https://registry.npmjs.org/lazy-brush/-/lazy-brush-2.0.1.tgz"
+  "version" "2.0.1"
 
 "leven@^3.1.0":
   "integrity" "sha512-qsda+H8jTaUaN/x5vzW2rzc+8Rw4TAQ/4KjB46IwK5VH+IlVeeeje/EoZRpiXvIqjFgK84QffqPztGI3VBLG1A=="

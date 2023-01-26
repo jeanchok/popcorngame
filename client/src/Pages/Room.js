@@ -21,38 +21,37 @@ const Room = () => {
     const { state } = useLocation();
     const [paramId, setParamId] = useState(sessionStorage.getItem('id'));
 
-    // useEffect(() => {
-    //     if (playersList.length = 0) {
-    //         navigate("/")
-    //     }
-    //     console.log(playersList.length == 0)
-    // }, [])
-
-    //useEffect(() => {
     socket.on('newPrivateRoom', (data) => {
         setGameLink(`${window.location.protocol}//${window.location.host}/?id=${data.gameID}`);
         const newPlayerArray = [...players];
-        newPlayerArray.push(data.userName);
+        newPlayerArray.push({ name: data.userName, score: 0, playerId: data.id });
         setPlayers(newPlayerArray);
-
+        console.log(players)
     });
     socket.on('joinRoom', (data) => {
         const newPlayerArray = [...players];
-        newPlayerArray.push(data.player);
+        newPlayerArray.push({ name: data.player, score: 0, playerId: data.playerId });
         setPlayers(newPlayerArray);
-        //socket.emit(newPlayerArray);
         setGameLink(`${window.location.protocol}//${window.location.host}/?id=${data.id}`)
-
+        console.log(players)
     });
 
 
     socket.on('players', (data) => {
-
         console.log('players', data)
         setPlayersList(data)
-
-
     })
+
+    useEffect(() => {
+        let params = new URLSearchParams(window.location.search);
+        let id = params.get('id');
+        if (isHosting === '1') {
+            socket.emit('players', { id: id, players: players });
+            setPlayersList(players);
+            console.log('otherplayname', players);
+        }
+    }, [players]);
+
 
 
     socket.on('selectGame', (data) => {
@@ -68,17 +67,7 @@ const Room = () => {
         }
     })
 
-
-
-    useEffect(() => {
-        let params = new URLSearchParams(window.location.search);
-        let id = params.get('id');
-        if (isHosting === '1') {
-            socket.emit('players', { id: id, players: players });
-            setPlayersList(players)
-            console.log('otherplayname', players);
-        }
-    }, [players]);
+    //let games = ['Le Picass', 'Rat de Stars', 'Au + Proche'];
 
     useEffect(() => {
         if (isHosting === '1') {
@@ -94,13 +83,6 @@ const Room = () => {
         }
 
     }, [selectedGame1, selectedGame2, selectedGame3]);
-
-
-
-    const copyLink = () => {
-        navigator.clipboard.writeText(gameLink);
-        alert("Copied the text: " + gameLink);
-    }
 
     const selectGame1 = () => {
 
@@ -129,6 +111,12 @@ const Room = () => {
 
     }
 
+
+    const copyLink = () => {
+        navigator.clipboard.writeText(gameLink);
+    }
+
+
     socket.on('startPicass', (data) => {
         console.log('startpicass', data);
         navigate("/picass", { state: playersList });
@@ -140,7 +128,6 @@ const Room = () => {
             let sessionId = sessionStorage.getItem('id');
             console.log('here obj', { id: paramId, players: players });
             socket.emit('startPicass', { id: sessionId, players: players });
-            // navigate("/picass", { state: playersList });
         }
     }
 
@@ -165,7 +152,7 @@ const Room = () => {
                                             <div className='-ml-6 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-full w-14 m-auto overflow-hidden'>
                                                 <img className='object-cover bg' src=".\img\ponce.png" alt="" />
                                             </div>
-                                            <h3 className='text-white m-auto items-center mr-4'>{player}</h3>
+                                            <h3 className='text-white m-auto items-center mr-4'>{player.name}</h3>
 
                                         </div>
                                     )}

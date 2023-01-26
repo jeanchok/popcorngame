@@ -6,13 +6,41 @@ class Canvas {
 
     broadcastDrawing(data) {
         const { socket } = this;
-        socket.broadcast.emit('drawing', data);
+        //socket.broadcast.emit('drawing', data);
+        socket.to(data.RoomId).emit('drawing', data);
     }
 
-    clearCanvas() {
+    draw(data) {
         const { socket } = this;
-        socket.broadcast.to(socket.roomID).emit('clearCanvas');
+        socket.to(data.RoomId).emit('draw', data);
+    }
+
+    startDrawing(data) {
+        const { socket } = this;
+        socket.to(data.RoomId).emit('startDrawing', data);
+    }
+
+    finishDrawing(data) {
+        const { socket } = this;
+        socket.to(data.RoomId).emit('finishDrawing', data);
+    }
+
+    changeColor(data) {
+        const { socket } = this;
+        socket.to(data.RoomId).emit('changeColor', data);
+    }
+
+    changeLineWidth(data) {
+        const { socket } = this;
+        socket.to(data.RoomId).emit('changeLineWidth', data);
+    }
+
+    clearCanvas(RoomId) {
+        const { socket } = this;
+        socket.to(RoomId).emit('clearCanvas');
+
     }
 }
 
 module.exports = Canvas;
+//exports.default = Canvas;

@@ -87,3 +87,26 @@ body,
     transform: rotate(360deg);
   }
 }
+
+/* Logo Animations */
+#popcornLogo {
+  position: relative;
+  color: #fff;
+  font-size: 5em;
+  text-shadow: 0 0 50px #0f0,
+    0 0 100px 100рх #0f0,
+    e 0 150px #0f0,
+    0 0 200px #0f0,
+    00 250px #0f0;
+  animation: animate 5s linear infinite;
+}
+
+@keyframes animate {
+  0% {
+    filter: hue-rotate(0deg);
+  }
+
+  100% {
+    filter: hue-rotate(360deg);
+  }
+}
