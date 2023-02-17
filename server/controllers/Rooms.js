@@ -2,6 +2,8 @@
 // import { createRequire } from "module";
 // const require = createRequire(import.meta.url);
 const { v4: uuidv4 } = require('uuid');
+const { getPlayersCount } = require('./helpers');
+
 
 class Room {
     constructor(io, socket) {
@@ -9,7 +11,7 @@ class Room {
         this.socket = socket;
     }
 
-    createPrivateRoom(playerUsername) {
+    createPrivateRoom(data) {
         const { socket } = this;
         const id = uuidv4();
         // let games = {};
@@ -23,11 +25,12 @@ class Room {
         //games[id][socket.id].avatar = player.avatar;
         //console.log('games here', games);
 
-        socket.playerUsername = playerUsername;
+        socket.playerUsername = data.playerUsername;
+        socket.playerAvatarIndex = data.playerAvatarIndex
         socket.roomID = id;
         socket.join(id);
-        socket.emit('newPrivateRoom', { gameID: id, userName: playerUsername, id: socket.id });
-        console.log('playerUsername', socket.playerUsername);
+        socket.emit('newPrivateRoom', { gameID: id, userName: data.playerUsername, id: socket.id, playerAvatarIndex: data.playerAvatarIndex });
+        console.log('playerUsername', socket.playerUsername, socket.playerAvatarIndex);
         console.log('done');
     }
 
@@ -42,6 +45,7 @@ class Room {
         //games[roomID][socket.id].name = data.player.name;
         // games[roomID][socket.id].avatar = data.player.avatar;
         socket.player = data.player;
+        socket.playerAvatarIndex = data.playerAvatarIndex
         socket.join(roomID);
         socket.roomID = roomID;
         data.playerId = socket.id;
@@ -66,7 +70,7 @@ class Room {
         const players = data.players;
         socket.roomID = roomID;
         console.log('players', players);
-        socket.broadcast.emit('players', players);
+        socket.to(roomID).emit('players', players);
     }
     /* Explain the previous function: */
 
@@ -84,8 +88,23 @@ class Room {
 
     async selectGame(data) {
         const { socket } = this;
-        socket.broadcast.emit('selectGame', data);
+        socket.to(data.roomID).emit('selectGame', data);
         console.log(data);
+    }
+
+    startCountdown(data) {
+        const { io, socket } = this;
+        let roomID = data.roomID;
+        io.in(roomID).emit('startCountdown');
+    }
+
+    onDisconnect() {
+        const { io, socket } = this;
+        const { roomID } = socket;
+        if (socket.player) {
+            //socket.player.id = socket.id;
+            socket.to(socket.roomID).emit('disconnection', socket.id);
+        }
     }
 }
 

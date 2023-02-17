@@ -3,8 +3,11 @@
 // const require = createRequire(import.meta.url);
 const { EventEmitter } = require('events');
 const leven = require('../controllers/Leven.js');
+// const { getPlayersCount } = require('./helpers');
 
 global.round = new EventEmitter();
+//global.games = new EventEmitter();
+
 
 const GraphemeSplitter = require('grapheme-splitter');
 const {
@@ -14,6 +17,9 @@ const {
     getHints,
 } = require('./helpers');
 
+// function getPlayersCount(roomID) {
+//     return Object.keys(games[roomID]).filter((key) => key.length === 20).length;
+// }
 
 let games = {};
 
@@ -22,6 +28,30 @@ class Game {
     constructor(io, socket) {
         this.io = io;
         this.socket = socket;
+    }
+
+
+
+    async onDisconnect() {
+        const { io, socket } = this;
+        const { roomID } = socket;
+        if (socket.player) {
+            //socket.player.id = socket.id;
+            socket.to(socket.roomID).emit('disconnection', socket.id);
+        }
+        if (games[roomID]) {
+            if (games[roomID][socket.id].score === 0) delete games[roomID][socket.id];
+            // if (Object.keys(games[roomID]).filter((key) => key.length === 20).length === 0) delete games[roomID];
+            // //if (getPlayersCount(roomID) === 0) delete games[roomID];
+            // if (Object.keys(games[roomID]).filter((key) => key.length === 20).length === 1) {
+            //     io.to(roomID).emit('endGame', { stats: games[roomID] });
+            // }
+            console.log('fdesqdsfdsfdfs', (Array.from(await io.in(roomID).allSockets()).length === 1));
+            if (Array.from(await io.in(roomID).allSockets()).length === 0) delete games[roomID];
+            if (Array.from(await io.in(roomID).allSockets()).length === 1) {
+                io.to(roomID).emit('endGame', { stats: games[roomID] });
+            }
+        }
     }
 
 
@@ -66,7 +96,6 @@ class Game {
         // games[roomID][socket.id].score = 0;
         let rounds = 2;
 
-        console.log('yo', data, socket.roomID);
         io.in(roomID).emit('startPicass', data);
 
 
@@ -76,22 +105,25 @@ class Game {
             games[roomID][player] = {};
             games[roomID][player].score = 0;
             games[roomID][player].name = data.players[index];
+            console.log(player, 'players')
         })
-
-        console.log('players.forEach', games[roomID]);
-        //socket.to(socket.roomID).emit('startPicass');
 
 
         for (let j = 0; j < rounds; j++) {
             /* eslint-disable no-await-in-loop */
+            io.to(roomID).emit('round', { round: j + 1 });
             for (let i = 0; i < players.length; i++) {
-                console.log('startPicass + giveTurnTo');
                 await this.giveTurnTo(players, i, roomID, games);
             }
         }
-        io.to(roomID).emit('endGame', { stats: games[socket.roomID] });
-        delete games[socket.roomID];
+        io.to(roomID).emit('endGame', { stats: games[roomID] });
+        //await io.in(roomID).socketsLeave(roomID);
+        delete games[roomID];
+        console.log(games);
     }
+
+
+
 
     // async startGame() {
     //     const { io, socket } = this;
@@ -114,6 +146,8 @@ class Game {
         const { io, socket } = this;
         //const { roomID } = socket;
         //const { time } = 40 * 1000;
+        if (!games[roomID]) return;
+        //console.log('time', games[roomID])
         const { time } = games[roomID];
         console.log('giveTurnTo');
         const player = players[i];
@@ -158,6 +192,7 @@ class Game {
     async onMessage(data) {
         const { io, socket } = this;
         const guess = data.message.toLowerCase().trim();
+        console.log('guess', guess);
         if (guess === '') return;
         const currentWord = games[data.roomId].currentWord.toLowerCase();
         const distance = leven(guess, currentWord);

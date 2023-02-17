@@ -5,8 +5,8 @@ import Room from './Pages/Room';
 import Canvas from './Pages/Canvas';
 import React from 'react';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import ChatTest from './Pages/ChatTest';
-import TryDrawGPT from './Pages/TryDrawGPT';
+import { SoundContextProvider } from 'context/SoundContext';
+import { SocketContextProvider } from 'context/socket';
 
 
 
@@ -15,17 +15,18 @@ function App() {
 
 
   return (
-
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Accueil />} />
-        <Route path="trygpt" element={<TryDrawGPT />} />
-        <Route path="/chattest" element={<ChatTest />} />
-        <Route path="*" element={<Accueil />} />
-        <Route path="/room" element={<Room />} />
-        <Route path="/picass" element={<Canvas />} />
-      </Routes>
-    </BrowserRouter>
+    <SocketContextProvider>
+      <SoundContextProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Accueil />} />
+            <Route path="*" element={<Accueil />} />
+            <Route path="/room" element={<Room />} />
+            <Route path="/picass" element={<Canvas />} />
+          </Routes>
+        </BrowserRouter>
+      </SoundContextProvider>
+    </SocketContextProvider>
   );
 }
 

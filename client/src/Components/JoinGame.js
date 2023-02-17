@@ -1,16 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import socketIOClient from "socket.io-client";
-import { socket } from "../context/socket";
+//import { socket } from "../context/socket";
+
+import { useSocket } from "../context/socket";
 import { useNavigate, useSearchParams, useParams } from "react-router-dom";
+import { avatars } from "../constant/const.js"
 
 
 const JoinGame = () => {
+    const socket = useSocket();
     const [playerUsername, setPlayerUsername] = useState("");
+    const [playerAvatarIndex, setPlayerAvatarIndex] = useState(0);
     const [response, setResponse] = useState("");
     const [paramId, setParamId] = useState("");
     const navigate = useNavigate();
-
-
 
     useEffect(() => {
         let params = new URLSearchParams(window.location.search);
@@ -18,60 +21,67 @@ const JoinGame = () => {
         if (id) {
             setParamId(id)
         }
-
     }, []);
 
 
     const joinRoom = () => {
-
         sessionStorage.setItem('name', playerUsername);
         sessionStorage.setItem('id', paramId);
         sessionStorage.setItem('isHosting', '0');
-        socket.emit('joinRoom', { id: paramId, player: playerUsername });
+        socket.emit('joinRoom', { id: paramId, player: playerUsername, playerAvatarIndex: playerAvatarIndex });
         navigate("/room", { state: playerUsername });
     }
 
-
+    const ChooseAvatar = (e) => {
+        e.preventDefault();
+        if (playerAvatarIndex + 1 > avatars.length - 1) {
+            setPlayerAvatarIndex(0)
+        }
+        else {
+            setPlayerAvatarIndex(playerAvatarIndex + 1)
+        }
+    }
 
     const createRoom = async () => {
         await sessionStorage.setItem('name', playerUsername);
 
-        socket.emit('newPrivateRoom', playerUsername);
-        await socket.on('newPrivateRoom', (data) => {
+        socket.emit('newPrivateRoom', { playerUsername: playerUsername, playerAvatarIndex: playerAvatarIndex });
+        await socket.on('newPrivateRoom', async (data) => {
             setResponse(data);
             console.log(data, 'response');
-
+            await setParamId(data.gameID);
             sessionStorage.setItem('id', data.gameID);
             sessionStorage.setItem('isHosting', '1');
         });
-
         await navigate("/room", { state: paramId });
     }
 
 
 
     return (
-        <form onSubmit={paramId ? (e) => joinRoom() : (e) => createRoom()} className='flex flex-col m-6 w-1/3'>
-            <div className='bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-full w-40 m-auto border border-white overflow-hidden'>
-                <img className='object-cover bg' src=".\img\ponce.png" alt="" />
-
+        <form onSubmit={paramId ? (e) => joinRoom() : (e) => createRoom()} className='flex flex-col m-6 md:w-1/3 w-full'>
+            <div className='bg-gradient-to-r  rounded-full w-40 m-auto overflow-hidden relative'>
+                <img className='object-cover bg' src={`./img/avatars/${avatars[playerAvatarIndex]}.jpg`} alt={avatars[playerAvatarIndex]} />
+                <button type="button" className='z-20 w-8 h-8 bg-white rounded-full absolute bottom-0 left-[40%] flex justify-center items-center hover:bg-slate-200 transition' onClick={(e) => ChooseAvatar(e)}>
+                    <img className='w-6' src="./img/deux-fleches-circulaires.png" alt="flèche changement avatar" />
+                </button>
             </div>
 
             <div className='flex flex-col'>
-                <label htmlFor='playerNickname' className='text-center'>Choisis ton chroniqueur et ton pseudo //  It's <time dateTime={response}>{response}</time></label>
-                <input className=' bg-red-100 mt-4 placeholder:italic placeholder:text-white block bg-white w-full border border-red-300 py-2 px-4 pl-2 pr-3 shadow-sm focus:outline-none focus:border-red-300 focus:ring-red-300 focus:ring-1 sm:text-sm'
+                <label htmlFor='playerNickname' className='text-center text-white'>Choisis ton chroniqueur et ton pseudo<time dateTime={response}>{response}</time></label>
+                <input className='mt-4 placeholder:italic bg-transparent placeholder:text-white text-white block bg-white w-full border border-red-300 py-2 px-4 pl-2 pr-3 shadow-sm focus:outline-none focus:border-red-300 focus:ring-red-300 focus:ring-1 sm:text-sm'
                     type='text'
                     placeholder='Ponce...'
                     onChange={(e) => { setPlayerUsername(e.target.value) }}>
                 </input>
             </div>
             {paramId ?
-                <button className='bg-transparent hover:bg-red-500 text-red-400 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent mt-4'
+                <button className='transition bg-transparent hover:bg-red-500 text-red-500 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent mt-4'
                     type='submit' value='Démarrer'
                 >REJOINDRE
                 </button>
                 :
-                <button className='bg-transparent hover:bg-red-500 text-red-400 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent mt-4'
+                <button className='transition bg-transparent hover:bg-red-500 text-red-500 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent mt-4'
                     type='submit' value='Démarrer'
                 >DEMARRER
                 </button>}

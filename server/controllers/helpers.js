@@ -76,14 +76,15 @@ function get3Words(roomID) {
     return Array.from(pickedWords);
 }
 
-function getPlayersCount(roomID) {
-    return Object.keys(games[roomID]).filter((key) => key.length === 20).length;
-}
+// function getPlayersCount(roomID) {
+//     console.log("getPlayersCount", games[roomID]);
+//     //return Object.keys(games[roomID]).filter((key) => key.length === 20).length;
+// }
 
 module.exports = {
     getScore,
     getHints,
     wait,
     get3Words,
-    getPlayersCount,
+    // getPlayersCount,
 };

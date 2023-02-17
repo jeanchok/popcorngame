@@ -1,112 +1,280 @@
-/* .App {
-  text-align: center;
-}
+ html {
+   height: 100%;
+ }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
+ body,
+ #root,
+ main {
+   height: 100%;
+   overflow: hidden;
+   /* position: absolute; */
+   width: 100%;
+   top: 0;
+ }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
 
-.App-link {
-  color: #61dafb;
-}
+ /* Chat TEst */
+ .App {
+   text-align: center;
+ }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+ .App-logo {
+   height: 40vmin;
+   pointer-events: none;
+ }
+
+ @media (prefers-reduced-motion: no-preference) {
+   .App-logo {
+     animation: App-logo-spin infinite 20s linear;
+   }
+ }
+
+ .App-header {
+   background-color: #282c34;
+   min-height: 100vh;
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   justify-content: center;
+   font-size: calc(10px + 2vmin);
+   color: white;
+ }
+
+ .App-link {
+   color: #61dafb;
+ }
+
+ @keyframes App-logo-spin {
+   from {
+     transform: rotate(0deg);
+   }
+
+   to {
+     transform: rotate(360deg);
+   }
+ }
+
+ /* Logo Animations */
+ #popcornLogo {
+   position: relative;
+   color: #fff;
+   font-size: 5em;
+   text-shadow: 0 0 50px #0f0,
+     0 0 100px 100рх #0f0,
+     e 0 150px #0f0,
+     0 0 200px #0f0,
+     00 250px #0f0;
+   animation: animate 5s linear infinite;
+ }
+
+ @keyframes animate {
+   0% {
+     filter: hue-rotate(0deg);
+   }
+
+   100% {
+     filter: hue-rotate(360deg);
+   }
+ }
+
+ /* Custom cursor canvas {
+  cursor: url('./img/paintbrush.png'), auto;
 } */
 
-html {
-  height: 100%;
-}
+ /* HomagePage Animations */
+ .micIcone {}
 
-body,
-#root {
-  height: 90%;
-}
+ .micIcone path:nth-child(1) {
+   stroke-dasharray: 1500px;
+   stroke-dashoffset: 1500px;
+   animation: anim 12s ease infinite;
+ }
 
+ .micIcone path:nth-child(2) {
+   stroke-dasharray: 1500px;
+   stroke-dashoffset: 1500px;
+   animation: anim 12s ease infinite;
+ }
 
-/* Chat TEst */
-.App {
-  text-align: center;
-}
+ .micIcone path:nth-child(3) {
+   stroke-dasharray: 1500px;
+   stroke-dashoffset: 1500px;
+   animation: anim 12s ease infinite;
+ }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
+ .micIcone path:nth-child(4) {
+   stroke-dasharray: 1500px;
+   stroke-dashoffset: 1500px;
+   animation: anim 12s ease infinite;
+ }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
+ @keyframes anim {
+   0% {
+     stroke-dashoffset: 1500px;
+   }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
+   50% {
+     stroke-dashoffset: 0px;
+   }
 
-.App-link {
-  color: #61dafb;
-}
+   70% {
+     stroke-dashoffset: 1500px;
+   }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
+   100% {
+     stroke-dashoffset: 0px;
+   }
+ }
 
-  to {
-    transform: rotate(360deg);
-  }
-}
+ /* Game background hover*/
+ .wrapper {
+   position: relative;
+ }
 
-/* Logo Animations */
-#popcornLogo {
-  position: relative;
-  color: #fff;
-  font-size: 5em;
-  text-shadow: 0 0 50px #0f0,
-    0 0 100px 100рх #0f0,
-    e 0 150px #0f0,
-    0 0 200px #0f0,
-    00 250px #0f0;
-  animation: animate 5s linear infinite;
-}
+ .cornerLeft {
+   transform: translateY(0) scale(0);
+   transition-delay: 75ms;
+   position: absolute;
+   top: 0px;
+   left: 0px;
+   width: 0px;
+   height: 0px;
+   border-top: 0.6rem solid transparent;
+   border-bottom: 0.6rem solid transparent;
+   border-right: 0.6rem solid red;
+   transform-origin: left center;
+   transition-property: transform;
+   transition-timing-function: ease-in;
+   transition-duration: 75ms;
+ }
 
-@keyframes animate {
-  0% {
-    filter: hue-rotate(0deg);
-  }
+ .cornerRight {
+   transform: translateX(0) scale(0);
+   transition-delay: 75ms;
+   position: absolute;
+   bottom: 0px;
+   right: 0px;
+   width: 0px;
+   height: 0px;
+   border-left: 0.6rem solid transparent;
+   border-right: 0.6rem solid transparent;
+   border-top: 0.6rem solid red;
+   transform-origin: center bottom;
+   transition-property: transform;
+   transition-timing-function: ease-in;
+   transition-duration: 75ms;
+ }
 
-  100% {
-    filter: hue-rotate(360deg);
-  }
-}
+ .left {
+   transform: scaleX(0);
+   transition-delay: 75ms;
+   position: absolute;
+   top: 0px;
+   bottom: 0px;
+   left: 0px;
+   background: red;
+   transform-origin: 0px 100%;
+   width: 0.6rem;
+   transition-property: transform;
+   transition-timing-function: ease-in;
+   transition-duration: 75ms;
+ }
+
+ .bottom {
+   transform: scaleY(0);
+   transition-delay: 75ms;
+   position: absolute;
+   bottom: 0px;
+   left: 0px;
+   right: 0px;
+   background: red;
+   transform-origin: 0px 100%;
+   height: 0.6rem;
+   transition-property: transform;
+   transition-timing-function: ease-in;
+   transition-duration: 75ms;
+ }
+
+ .wrapper:hover .cornerLeft {
+   transform: translateY(-0.6rem) scale(1);
+ }
+
+ .wrapper:hover .cornerRight {
+   transform: translateX(0.6rem) scale(1)
+ }
+
+ .wrapper:hover .bottom {
+   transform: scaleY(1);
+ }
+
+ .wrapper:hover .left {
+   transform: scaleX(1);
+ }
+
+ circle {
+   stroke-dasharray: 503;
+   stroke-dashoffset: 503;
+   animation: clock-animation 1s linear infinite;
+ }
+
+ @keyframes clock-animation {
+   0% {
+     stroke-dashoffset: 503;
+   }
+
+   100% {
+     stroke-dashoffset: 0;
+   }
+ }
+
+ /* Pages Animations */
+ .fade-out {
+   -webkit-animation: fade-out 1s ease-out both;
+   animation: fade-out 1s ease-out both;
+ }
+
+ @-webkit-keyframes fade-out {
+   0% {
+     opacity: 1;
+   }
+
+   100% {
+     opacity: 0;
+   }
+ }
+
+ @keyframes fade-out {
+   0% {
+     opacity: 1;
+   }
+
+   100% {
+     opacity: 0;
+   }
+ }
+
+ .fade-in {
+   -webkit-animation: fade-in 0.5s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
+   animation: fade-in 0.5s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
+ }
+
+ @-webkit-keyframes fade-in {
+   0% {
+     opacity: 0;
+   }
+
+   100% {
+     opacity: 1;
+   }
+ }
+
+ @keyframes fade-in {
+   0% {
+     opacity: 0;
+   }
+
+   100% {
+     opacity: 1;
+   }
+ }

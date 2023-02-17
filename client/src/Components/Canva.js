@@ -1,15 +1,19 @@
 import { emit } from "process";
 import React, { useEffect, useContext, useRef, useState } from "react";
-import { socket } from "../context/socket";
+//import { socket } from "../context/socket";
 import { LazyBrush } from 'lazy-brush';
+import { useSocket } from "../context/socket";
 
 const Canva = ({ playersList }) => {
+    const socket = useSocket();
     const [isDrawing, setIsDrawing] = useState(false);
     const [isChoosingWord, setIsChoosingWord] = useState(false);
     const [drawerisChoosing, setDrawerisChoosing] = useState(false);
     const [roundStarted, setRoundStarted] = useState(false);
     const [fillingMode, setFillingMode] = useState(false);
-    const [currentColor, setCurrentColor] = useState('');
+    const [currentColor, setCurrentColor] = useState('black');
+    const [currentLineWidth, setCurrentLineWidth] = useState(25);
+
     const [wordsChoice, setWordsChoice] = useState([]);
     const [wordToGuess, setWordToGuess] = useState('');
     const [drawer, setDrawer] = useState('');
@@ -22,47 +26,52 @@ const Canva = ({ playersList }) => {
     //const [points, setPoints] = useState([]);
     const [canvasPaths, setCanvasPaths] = useState([]);
 
+    const socketRef = useRef();
+
     useEffect(() => {
         prepareCanvas();
         prepareCanvasDrawer();
 
     }, []);
 
-    //const colors = [{ name: 'white', value: 'white' }, { name: 'black', value: 'black' }, { name: 'slate-400', value: 'rgb(148 163 184)' }, { name: 'slate-700', value: 'rgb(51 65 85)' }, { name: 'red-400', value: 'rgb(252 165 165)' }, { name: 'red-700', value: 'rgb(185 28 28)' }, { name: 'orange-400', value: 'rgb(251 146 60)' }, { name: 'orange-700', value: 'rgb(194 65 12)' }, { name: 'yellow-400', value: 'rgb(250 204 21)' }, { name: 'yellow-700', value: 'rgb(161 98 7)' }, { name: 'green-400', value: 'rgb(74 222 128)' }, { name: 'green-700', value: 'rgb(21 128 61)' }, { name: 'blue-400', value: 'rgb(96 165 250)' }, { name: 'blue-700', value: 'rgb(29 78 216)' }, { name: 'purple-400', value: 'rgb(192 132 252)' }, { name: 'purple-700', value: 'rgb(126 34 206)' }, { name: 'pink-400', value: 'rgb(244 114 182)' }, { name: 'pink-700', value: 'rgb(190 24 93)' }];
+    const colors1 = [{ name: 'white', value: 'white' }, { name: 'slate-400', value: 'rgb(148 163 184)' },
+    { name: 'red-400', value: 'rgb(252 165 165)' },
+    { name: 'orange-400', value: 'rgb(251 146 60)' },
+    { name: 'yellow-400', value: 'rgb(250 204 21)' },
+    { name: 'green-400', value: 'rgb(74 222 128)' },
+    { name: 'blue-400', value: 'rgb(96 165 250)' },
+    { name: 'purple-400', value: 'rgb(192 132 252)' },
+    { name: 'pink-400', value: 'rgb(244 114 182)' }];
+
+    const colors2 = [{ name: 'black', value: 'black' }, { name: 'slate-700', value: 'rgb(51 65 85)' },
+    { name: 'red-700', value: 'rgb(185 28 28)' }, { name: 'orange-700', value: 'rgb(194 65 12)' }
+        , { name: 'yellow-700', value: 'rgb(161 98 7)' }, { name: 'green-700', value: 'rgb(21 128 61)' }
+        , { name: 'blue-700', value: 'rgb(29 78 216)' }, { name: 'purple-700', value: 'rgb(126 34 206)' }
+        , { name: 'pink-700', value: 'rgb(190 24 93)' }
+    ]
+
 
     const prepareCanvas = () => {
-        const canvas = canvasRef.current;
-        canvas.width = canvas.clientWidth * 2;
-        canvas.height = canvas.clientHeight * 2;
-        canvas.style.width = canvas.width;
-        canvas.style.height = canvas.height;
-        // canvas.style.width = `${canvas.clientWidth}px`;
-        // canvas.style.height = `${canvas.clientHeight}px`;
+        // const canvas = canvasRef.current;
+        // canvas.width = canvas.clientWidth * 2;
+        // canvas.height = canvas.clientHeight * 2;
+        // canvas.style.width = canvas.width;
+        // canvas.style.height = canvas.height;
+
+        // const context = canvas.getContext("2d");
+        // context.scale(2, 2);
+        //context.lineCap = "round";
+        // context.strokeStyle = currentColor;
+        // context.lineWidth = currentLineWidth;
+        // contextRef.current = context;
 
 
-        // const divStyle = {
-        //     width: canvas.width,
-        //     height: canvas.height,
-        // };
-
-        // const canvasDrawer = canvasDrawerRef.current;
-        // canvasDrawer.width = canvasDrawer.clientWidth * 2;
-        // canvasDrawer.height = canvasDrawer.clientHeight * 2;
-        // canvasDrawer.style.width = canvasDrawer.width;
-        // canvasDrawer.style.height = canvasDrawer.height;
-
-        const context = canvas.getContext("2d");
-        context.scale(2, 2);
-        context.lineCap = "round";
-        context.strokeStyle = "black";
-        context.lineWidth = 5;
-        contextRef.current = context;
     };
 
     const prepareCanvasDrawer = () => {
 
 
-        const canvasDrawer = canvasDrawerRef.current;
+        //const canvasDrawer = canvasDrawerRef.current;
         // canvasDrawer.width = canvasDrawer.clientWidth * 2;
         // canvasDrawer.height = canvasDrawer.clientHeight * 2;
         // canvasDrawer.style.width = canvasDrawer.width;
@@ -71,155 +80,258 @@ const Canva = ({ playersList }) => {
 
     };
 
+    useEffect(() => {
+        // --------------- getContext() method returns a drawing context on the canvas-----
 
 
-    const startDrawing = ({ nativeEvent }) => {
-        const { offsetX, offsetY } = nativeEvent;
-        contextRef.current.beginPath();
-        contextRef.current.moveTo(offsetX, offsetY);
-        setIsDrawing(true);
-        socket.emit('startDrawing', { RoomId: RoomId, nativeEvent: { offsetX, offsetY } });
-    };
+        const canvas = canvasRef.current;
+        canvas.width = canvas.clientWidth * 2;
+        canvas.height = canvas.clientHeight * 2;
+        canvas.style.width = canvas.width;
+        canvas.style.height = canvas.height;
 
 
-
-    const finishDrawing = async () => {
-        contextRef.current.closePath();
-        setIsDrawing(false);
-        socket.emit('finishDrawing', { RoomId: RoomId, contextRef: contextRef.current });
-
-
-    };
-
+        const context = canvas.getContext("2d");
+        context.scale(2, 2);
+        context.lineCap = "round";
+        context.strokeStyle = 'black';
+        context.lineWidth = 25;
+        contextRef.current = context;
+        setCurrentColor('black');
 
 
-    const midPointBtw = (p1, p2) => {
-        return {
-            x: p1.x + (p2.x - p1.x) / 2,
-            y: p1.y + (p2.y - p1.y) / 2
+        // ----------------------- Colors --------------------------------------------------
+
+
+        const current = {
+            color: currentColor,
         };
-    };
 
-    let points = [];
+        // const colors = document.getElementsByClassName('color');
 
-    const draw = ({ nativeEvent }) => {
-        if (!isDrawing) {
-            return;
-        }
+        // // helper that will update the current color
+        // const onColorUpdate = (e) => {
 
+        //     current.color = e.target.value;
+        //     console.log('onColorUpdate', current.color)
+        // };
 
-        const { offsetX, offsetY } = nativeEvent;
-        points.push({ x: offsetX, y: offsetY });
-        let p1 = points[0];
-        let p2 = points[1];
-        contextRef.current.moveTo(p2.x, p2.y);
-        contextRef.current.beginPath();
-        for (let i = 1, len = points.length; i < len; i++) {
-            const midPoint = midPointBtw(p1, p2);
-            contextRef.current.quadraticCurveTo(p1.x, p1.y, midPoint.x, midPoint.y);
-            p1 = points[i];
-            p2 = points[i + 1];
-        }
-        contextRef.current.lineTo(p1.x, p1.y);
-        contextRef.current.stroke();
+        // // loop through the color elements and add the click event listeners
+        // for (let i = 0; i < colors.length; i++) {
+        //     colors[i].addEventListener('click', onColorUpdate, false);
+        // }
 
-        socket.emit('drawing', { RoomId: RoomId, isDrawing, nativeEvent: { offsetX, offsetY }, points: points });
-    };
+        let drawing = false;
 
+        // ------------------------------- create the drawing ----------------------------
+        let points = [];
 
+        const drawLine = (x0, y0, x1, y1, color, size, emit) => {
+            console.log('drawing', 'color', color, 'size', size);
+            context.beginPath();
+            context.moveTo(x0, y0);
+            // points.push({ x: x1, y: y1 });
+            // let p1 = points[0];
+            // let p2 = points[1];
+            // if (p2) {
+            //     context.moveTo(p2.x, p2.y);
+            // }
+            // //context.beginPath();
+            // for (let i = 1, len = points.length; i < len; i++) {
+            //     const midPoint = midPointBtw(p1, p2);
+            //     context.quadraticCurveTo(p1.x, p1.y, midPoint.x, midPoint.y);
+            //     p1 = points[i];
+            //     p2 = points[i + 1];
+            // }
+            // context.lineTo(p1.x, p1.y);
+            context.lineTo(x1, y1);
+            //context.strokeStyle = current.color;
+            // context.lineWidth = size;
+            context.stroke();
+            context.closePath();
 
-    socket.on('startDrawing', async (data) => {
-        const { offsetX, offsetY } = data.nativeEvent;
-        contextRef.current.beginPath();
-        contextRef.current.moveTo(offsetX, offsetY);
-        await setIsDrawing(true);
-    });
+            if (!emit) { return; }
+            const w = canvas.width;
+            const h = canvas.height;
 
-    socket.on('finishDrawing', async (data) => {
-        contextRef.current.closePath();
-        await setIsDrawing(false);
-    })
+            socket.emit('drawing', {
+                RoomId: RoomId, isDrawing, x0: x0 / w,
+                y0: y0 / h,
+                x1: x1 / w,
+                y1: y1 / h,
+                color: color, points: points, size: size
+            })
+        };
 
-    socket.on('drawing', (data) => {
-        if (!isDrawing) {
-            return;
-        }
-        let p1 = data.points[0];
-        let p2 = data.points[1];
-        contextRef.current.moveTo(p2.x, p2.y);
-        contextRef.current.beginPath();
-        for (let i = 1, len = data.points.length; i < len; i++) {
-            const midPoint = {
+        const midPointBtw = (p1, p2) => {
+            return {
                 x: p1.x + (p2.x - p1.x) / 2,
                 y: p1.y + (p2.y - p1.y) / 2
             };
-            contextRef.current.quadraticCurveTo(p1.x, p1.y, midPoint.x, midPoint.y);
-            p1 = data.points[i];
-            p2 = data.points[i + 1];
+        };
+
+
+        // ---------------- mouse movement --------------------------------------
+
+        const onMouseDown = (e) => {
+            drawing = true;
+            let bounding = canvas.getBoundingClientRect();
+            current.x = e.clientX - bounding.left || e.touches[0].clientX - bounding.left;
+            current.y = e.clientY - bounding.top || e.touches[0].clientY - bounding.top;
+        };
+
+        const onMouseMove = (e) => {
+            if (!drawing) { return; }
+            let bounding = canvas.getBoundingClientRect();
+            drawLine(current.x, current.y, e.clientX - bounding.left || e.touches[0].clientX - bounding.left, e.clientY - bounding.top || e.touches[0].clientY - bounding.top, current.color, currentLineWidth, true);
+            current.x = e.clientX - bounding.left || e.touches[0].clientX - bounding.left;
+            current.y = e.clientY - bounding.top || e.touches[0].clientY - bounding.top;
+            console.log('currentColor', current.color)
+        };
+
+        const onMouseUp = (e) => {
+            if (!drawing) { return; }
+            let bounding = canvas.getBoundingClientRect();
+            drawing = false;
+            drawLine(current.x, current.y, e.clientX - bounding.left || e.touches[0].clientX - bounding.left, e.clientY - bounding.top || e.touches[0].clientY - bounding.top, current.color, currentLineWidth, true);
+        };
+
+        // ----------- limit the number of events per second -----------------------
+
+        const throttle = (callback, delay) => {
+            let previousCall = new Date().getTime();
+            return function () {
+                const time = new Date().getTime();
+
+                if ((time - previousCall) >= delay) {
+                    previousCall = time;
+                    callback.apply(null, arguments);
+                }
+            };
+        };
+
+        // -----------------add event listeners to our canvas ----------------------
+
+        canvas.addEventListener('mousedown', onMouseDown, false);
+        canvas.addEventListener('mouseup', onMouseUp, false);
+        canvas.addEventListener('mouseout', onMouseUp, false);
+        canvas.addEventListener('mousemove', throttle(onMouseMove, 10), false);
+
+        // Touch support for mobile devices
+        canvas.addEventListener('touchstart', onMouseDown, false);
+        canvas.addEventListener('touchend', onMouseUp, false);
+        canvas.addEventListener('touchcancel', onMouseUp, false);
+        canvas.addEventListener('touchmove', throttle(onMouseMove, 10), false);
+
+        // -------------- make the canvas fill its parent component -----------------
+
+        // const onResize = () => {
+        //     canvas.width = window.innerWidth;
+        //     canvas.height = window.innerHeight;
+        //     console.log(canvas.width, canvas.height, 'onResize');
+        // };
+
+        // window.addEventListener('resize', onResize, false);
+        // onResize();
+
+        // ----------------------- socket.io connection ----------------------------
+        const onDrawingEvent = (data) => {
+            //console.log(data)
+            const w = canvas.width;
+            const h = canvas.height;
+            drawLine(data.x0 * w, data.y0 * h, data.x1 * w, data.y1 * h, data.color, data.size);
         }
-        contextRef.current.lineTo(p1.x, p1.y);
-        contextRef.current.stroke();
-    })
+        //socket.on('drawing', onDrawingEvent);
 
-    socket.on('changeColor', async (data) => {
-        const canvas = canvasRef.current;
-        const context = canvas.getContext("2d");
-        context.strokeStyle = await data.color;
-        contextRef.current = context;
-    })
-
-    socket.on('changeLineWidth', async (data) => {
-        const canvas = canvasRef.current;
-        const context = canvas.getContext("2d");
-        context.lineWidth = await data.size;
-        contextRef.current = context;
-    })
-
-    socket.on('clearCanvas', async () => {
-        const canvas = canvasRef.current;
-        const context = canvas.getContext("2d");
-        context.clearRect(0, 0, canvas.width, canvas.height);
-        // context.fillStyle = "white";
-        // context.fillRect(0, 0, canvas.width, canvas.height);
-    })
-
-    socket.on('chooseWord', async ([word1, word2, word3]) => {
-        setIsThedrawer(true);
-        await setDrawerisChoosing(false);
-        await setIsChoosingWord(true);
-        setWordsChoice([word1, word2, word3]);
+        socketRef.current = socket;
+        socket.on('drawing', onDrawingEvent);
+    }, [socket]);
 
 
-    });
-
-    socket.on('choosing', async ({ name }) => {
-        setIsThedrawer(false);
-        console.log('playersList', playersList);
-        let drawer = playersList.find(player => player.playerId === name);
-        await setDrawerisChoosing(true);
-        setDrawer(drawer.name);
-    });
-
-    socket.on('hideWord', ({ word }) => {
-        console.log('hideWord', word);
-        //setDrawerisChoosing(false);
-        // setIsChoosingWord(false);
-        setWordToGuess(word);
-    });
+    useEffect(() => {
+        socket.on('hideWord', ({ word }) => {
+            console.log('hideWord')
+            //console.log('hideWord', word);
+            //setDrawerisChoosing(false);
+            // setIsChoosingWord(false);
+            setWordToGuess(word);
+        });
 
 
+        socket.on('changeColor', async (data) => {
+            console.log('changeColor')
+            const canvas = canvasRef.current;
+            const context = canvas.getContext("2d");
+            context.strokeStyle = await data.color;
+            contextRef.current = context;
+        })
 
-    socket.on('startTimer', () => {
-        setDrawerisChoosing(false);
-    })
+        socket.on('changeLineWidth', async (data) => {
+            console.log('changeLineWidth')
+            const canvas = canvasRef.current;
+            const context = canvas.getContext("2d");
+            context.lineWidth = await data.size;
+            //contextRef.current = context;
+        })
+
+        socket.on('clearCanvas', async () => {
+            const canvas = canvasRef.current;
+            const context = canvas.getContext("2d");
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            // context.fillStyle = "white";
+            // context.fillRect(0, 0, canvas.width, canvas.height);
+        })
+
+        socket.on('chooseWord', async ([word1, word2, word3]) => {
+            console.log('chooseWord')
+            setIsThedrawer(true);
+            await setDrawerisChoosing(false);
+            await setIsChoosingWord(true);
+            setWordsChoice([word1, word2, word3]);
+
+
+        });
+
+        socket.on('choosing', async ({ name }) => {
+            console.log('choosing')
+            setIsThedrawer(false);
+            let drawer = playersList.find(player => player.playerId === name);
+            await setDrawerisChoosing(true);
+            setDrawer(drawer.name);
+        });
+
+        socket.on('startTimer', () => {
+            setDrawerisChoosing(false);
+        })
+    }, [socket]);
+
+
+
+
+
+
 
 
     const chooseWord = async (words) => {
         await setIsChoosingWord(false);
         await setWordToGuess(words);
+        console.log('chooseWord')
         socket.emit('chooseWord', { words, RoomId });
     };
 
+    // if (isThedrawer) {
+    //     let canvas = canvasRef.current;
+    //     // canvas.addEventListener('touchstart', startDrawing, false);
+    //     // canvas.addEventListener('touchend', finishDrawing, false);
+    //     // canvas.addEventListener('touchmove', throttle(draw, 6), false);
+    //     if (canvas.width < 1000) {
+    //         canvas.addEventListener('mousedown', onMouseDown, false);
+    //         canvas.addEventListener('mouseup', finishDrawing, false);
+    //     }
+
+    //     //canvas.addEventListener('mousemove', throttle(draw, 6), false);
+
+    // }
 
 
     const clearCanvas = () => {
@@ -227,27 +339,16 @@ const Canva = ({ playersList }) => {
         const canvas = canvasRef.current;
         const context = canvas.getContext("2d");
         context.clearRect(0, 0, canvas.width, canvas.height);
-        // context.fillStyle = "white";
-        // context.fillRect(0, 0, canvas.width, canvas.height);
 
         socket.emit('clearCanvas', RoomId);
 
     };
 
-    socket.on('lastWord', ({ word }) => {
-
-
-    })
-
-
-
-
     const changeColor = (color) => {
         const canvas = canvasRef.current;
         const context = canvas.getContext("2d");
         context.strokeStyle = color;
-        contextRef.current = context;
-
+        //contextRef.current = context;
         socket.emit('changeColor', { RoomId: RoomId, color });
 
     };
@@ -256,7 +357,7 @@ const Canva = ({ playersList }) => {
         const canvas = canvasRef.current
         const context = canvas.getContext("2d")
         context.lineWidth = size;
-        contextRef.current = context;
+        //contextRef.current = context;
 
         socket.emit('changeLineWidth', { RoomId: RoomId, size });
 
@@ -267,27 +368,27 @@ const Canva = ({ playersList }) => {
     }
 
     return (
-        <div className='w-2/3 bg-red-600 w-full flex flex-col'>
+        <div className='w-2/3 w-full md:h-auto h-full flex flex-col'>
             {
                 isChoosingWord ?
-                    <h2 className='text-red-500 bg-white font-semibold text-center pb-4 pt-4 border-red-400 border-l-2 text-xl font-semibold'>CHOISISSEZ UNE EXPRESSION !</h2> :
+                    <h2 className='text-white  font-semibold text-center pb-4 pt-4 border-red-400 border-l-2 border-r-2 text-xl h-auto md:h-[12%]'>CHOISISSEZ UNE EXPRESSION !</h2> :
                     drawerisChoosing ?
-                        <h2 className='text-red-500 bg-white font-semibold text-center pb-4 pt-4 border-red-400 border-l-2 text-xl font-semibold'>L'EXPRESSION EST EN TRAIN DE CHARGER...</h2> :
+                        <h2 className='text-white font-semibold text-center pb-4 pt-4 border-red-400 border-l-2 border-r-2 text-xl h-auto md:h-[12%]'>L'EXPRESSION EST EN TRAIN DE CHARGER...</h2> :
                         wordToGuess ?
-                            <h2 className='text-red-500 bg-white font-semibold text-center pb-4 pt-4 border-red-400 border-l-2 text-xl font-semibold'>{capitalizeFirstLetter(wordToGuess)}</h2> :
+                            <h2 className='text-white font-semibold text-center pb-4 pt-4 border-red-400 border-l-2 border-r-2 text-xl h-auto md:h-[12%]'>{capitalizeFirstLetter(wordToGuess)}</h2> :
                             null
             }
-            <div className='flex m-auto flex-col justify-between h-full w-full'>
-                <div className=' flex flex-row m-auto justify-between mb-0 h-full w-full' >
+            <div className='flex flex-col justify-between w-full md:h-[88%] h-full'>
+                <div className=' flex flex-row m-auto justify-center align-center items-center mb-0 h-full w-full' >
                     {isChoosingWord ?
-                        <div className={"flex align-center justify-center h-[250px] w-[450px] bg-red-200 z-10 absolute "}>
-                            <div className="flex flex-col  align-center justify-center">
+                        <div className={"flex align-center justify-center h-[250px] w-[450px] rounded-xl bg-neutral-800 z-10 absolute "}>
+                            <div className="flex flex-col  align-center justify-center  gap-y-4 p-4">
                                 {wordsChoice.map((words, index) =>
-                                    <div className="flex mt-4" key={index}>
-                                        <button onClick={(e) => { chooseWord(words) }} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 border border-red-700">
+                                    <div className="flex items-center" key={index}>
+                                        <button onClick={(e) => { chooseWord(words) }} className="h-[41px] whitespace-nowrap hover:bg-red-500 hover:border-transparent transition text-white border-white border-1 font-bold py-2 px-4 border border-red-700">
                                             Celle-la !
                                         </button>
-                                        <p className="ml-2 py-2 px-4 ">{capitalizeFirstLetter(words)}</p>
+                                        <p className="ml-2 py-2 text-white px-4 font-bold">{capitalizeFirstLetter(words)}</p>
                                     </div>
                                 )}
                             </div>
@@ -297,11 +398,14 @@ const Canva = ({ playersList }) => {
                     }
                     {
                         drawerisChoosing ?
-                            <div className={"flex align-center justify-center h-[250px] w-[450px] bg-red-200 z-10 absolute "}>
-                                <div className="flex flex-col  align-center justify-center">
-                                    <div className="flex mt-4" >
-                                        <p className="ml-2 py-2 px-4 ">{drawer} est en train de choisir une expression.</p>
+                            <div className={"flex align-center justify-center h-[250px] w-[450px] rounded-xl bg-neutral-800 z-10 absolute "}>
+                                <div className="flex flex-col  align-center justify-center  gap-y-4 p-4">
+
+                                    <div className="flex items-center">
+
+                                        <p className="ml-2 py-2 px-4 text-white"><strong>{drawer}</strong> est en train de choisir une expression.</p>
                                     </div>
+
                                 </div>
                             </div>
                             :
@@ -310,9 +414,11 @@ const Canva = ({ playersList }) => {
                     {
                         isThedrawer ?
                             <canvas className="h-full w-full bg-white"
-                                onMouseDown={!fillingMode ? startDrawing : null}
-                                onMouseUp={!fillingMode ? finishDrawing : null}
-                                onMouseMove={!fillingMode ? draw : null}
+                                // onMouseDown={startDrawing}
+                                // onMouseUp={finishDrawing}
+                                // onMouseMove={throttle(draw, 6)}
+                                //touchStart={startDrawing}
+
                                 //onClick={fillingMode ? (e) => fillDrawing(e) : null}
                                 ref={canvasRef}
                             />
@@ -324,113 +430,78 @@ const Canva = ({ playersList }) => {
                     }
 
                 </div>
+                {
+                    isThedrawer ?
+
+                        <div className="bg-white flex space-around justify-center border-t-2 border-red-400">
+                            <div className="flex items-center justify-center">
+                                <div className={"p-4 m-1 bg-" + currentColor} style={{ backgroundColor: currentColor }} >
+                                </div>
+                            </div>
+                            <div className="flex items-center justify-center h-full flex-col">
+                                <div className="flex flex-raw">
+                                    {colors1.map(color => (
+                                        <button onClick={() => { changeColor(color.value); setCurrentColor(color.value) }} value={color.value} className={`bg-${color.name} p-2 color ${color.value}`} style={{ backgroundColor: color.value }}></button>
+                                    ))}
+                                </div>
+                                <div className="flex flex-raw">
+                                    {colors2.map(color => (
+                                        <button onClick={() => { changeColor(color.value); setCurrentColor(color.value) }} value={color.value} className={`bg-${color.name} p-2 color ${color.value}`} style={{ backgroundColor: color.value }}></button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            <div className="flex items-center justify-center">
+                                <button className=" m-1 w-8" onClick={() => setFillingMode(false)}>
+                                    <img className='w-full h-full' src=".\img\icons8-crayon-64.png" alt="logo crayon" />
+                                </button>
+                            </div>
+                            <div className="flex items-center justify-center">
+                                <button onClick={() => { changeColor('white'); setCurrentColor('white') }} className=" m-1 w-8">
+                                    <img className='w-full h-full' src=".\img\icons8-eraser-64.png" alt="logo gomme" />
+                                </button>
+
+                            </div>
+                            {/* <div className="flex items-center justify-center">
+                            <button className="bg-white m-1 w-8" onClick={() => setFillingMode(true)}>
+                                <img className='w-full h-full' src=".\img\icons8-bucket-64.png" alt="logo sceau" />
+                            </button>
+                        </div> */}
+                            <div className="flex items-center justify-center">
+                                <button onClick={() => changeLineWidth(35)} className=" m-1 w-8 h-8 flex items-center justify-center">
+                                    <div className="rounded-full bg-black w-7 h-7"></div>
+                                </button>
+                            </div>
+                            <div className="flex items-center justify-center">
+                                <button onClick={() => changeLineWidth(25)} className=" m-1 w-8 h-8 flex items-center justify-center">
+                                    <div className="rounded-full bg-black w-6 h-6"></div>
+                                </button>
+                            </div>
+                            <div className="flex items-center justify-center">
+                                <button onClick={() => changeLineWidth(15)} className=" m-1 w-8 h-8 flex items-center justify-center">
+                                    <div className="rounded-full bg-black w-4 h-4"></div>
+                                </button>
+                            </div>
+                            <div className="flex items-center justify-center">
+                                <button onClick={() => changeLineWidth(5)} className=" m-1 w-8 h-8 flex items-center justify-center">
+                                    <div className="rounded-full bg-black w-2 h-2"></div>
+                                </button>
+                            </div>
+                            <div className="flex items-center justify-center">
+                                <button className=" m-1 w-8" onClick={() => clearCanvas()}>
+                                    <img className='w-full h-full' src=".\img\icons8-bin-60.png" alt="logo poubelle" />
+                                </button>
+                            </div>
+                        </div>
+                        :
+                        null
+                }
             </div>
 
 
 
 
-            {
-                isThedrawer ?
 
-                    <div className="bg-slate-200 flex space-around justify-center">
-                        <div className="flex items-center justify-center">
-                            <div className={"p-4 m-1 bg-" + currentColor} >
-                            </div>
-                        </div>
-                        {/* <div className="flex items-center justify-center h-full">
-                            {colors.map(color => (
-                                <div className="flex flex-col">
-                                    <button onClick={() => { changeColor(color.value); setCurrentColor(color.name) }} className={`bg-${color.name} p-2`}></button>
-                                </div>
-                            ))}
-                        </div> */}
-                        <div className="flex items-center justify-center h-full">
-                            <div className="flex flex-col">
-                                <button onClick={() => { changeColor('white'); setCurrentColor('white') }} className="bg-white p-2"></button>
-                                <button onClick={() => { changeColor('black'); setCurrentColor('black') }} className="bg-black p-2"></button>
-                            </div>
-                            <div className="flex flex-col">
-                                <button onClick={() => { changeColor('rgb(148 163 184)'); setCurrentColor('slate-400') }} className="bg-slate-400 p-2"></button>
-                                <button onClick={() => { changeColor('rgb(51 65 85)'); setCurrentColor('slate-700') }} className="bg-slate-700 p-2"></button>
-                            </div>
-                            <div className="flex flex-col">
-                                <button onClick={() => { changeColor('rgb(252 165 165)'); setCurrentColor('red-400') }} className="bg-red-400 p-2"></button>
-                                <button onClick={() => { changeColor('rgb(185 28 28)'); setCurrentColor('red-700') }} className="bg-red-700 p-2"></button>
-                            </div>
-                            <div className="flex flex-col">
-                                <button onClick={() => { changeColor('rgb(251 146 60)'); setCurrentColor('orange-400') }} className="bg-orange-400 p-2"></button>
-                                <button onClick={() => { changeColor('rgb(194 65 12)'); setCurrentColor('orange-700') }} className="bg-orange-700 p-2"></button>
-                            </div>
-                            <div className="flex flex-col">
-                                <button onClick={() => { changeColor('rgb(250 204 21)'); setCurrentColor('yellow-400') }} className="bg-yellow-400 p-2"></button>
-                                <button onClick={() => { changeColor('rgb(161 98 7)'); setCurrentColor('yellow-700') }} className="bg-yellow-700 p-2"></button>
-                            </div>
-                            <div className="flex flex-col">
-                                <button onClick={() => { changeColor('rgb(74 222 128)'); setCurrentColor('green-400') }} className="bg-green-400 p-2"></button>
-                                <button onClick={() => { changeColor('rgb(21 128 61)'); setCurrentColor('green-700') }} className="bg-green-700 p-2"></button>
-                            </div>
-                            <div className="flex flex-col">
-                                <button onClick={() => { changeColor('rgb(96 165 250)'); setCurrentColor('blue-400') }} className="bg-blue-400 p-2"></button>
-                                <button onClick={() => { changeColor('rgb(29 78 216)'); setCurrentColor('blue-700') }} className="bg-blue-700 p-2"></button>
-                            </div>
-                            <div className="flex flex-col">
-                                <button onClick={() => { changeColor('rgb(192 132 252)'); setCurrentColor('purple-400') }} className="bg-purple-400 p-2"></button>
-                                <button onClick={() => { changeColor('rgb(126 34 206)'); setCurrentColor('purple-700') }} className="bg-purple-700 p-2"></button>
-                            </div>
-                            <div className="flex flex-col">
-                                <button onClick={() => { changeColor('rgb(244 114 182)'); setCurrentColor('pink-400') }} className="bg-pink-400 p-2"></button>
-                                <button onClick={() => { changeColor('rgb(190 24 93)'); setCurrentColor('pink-700') }} className="bg-pink-700 p-2"></button>
-                            </div>
-                            <div className="flex flex-col">
-                                <button onClick={() => { changeColor('rgb(251 191 36)'); setCurrentColor('amber-400') }} className="bg-amber-400 p-2"></button>
-                                <button onClick={() => { changeColor('rgb(180 83 9)'); setCurrentColor('amber-700') }} className="bg-amber-700 p-2"></button>
-                            </div>
-                        </div>
-                        <div className="flex items-center justify-center">
-                            <button className="bg-white m-1 w-8" onClick={() => setFillingMode(false)}>
-                                <img className='w-full h-full' src=".\img\icons8-crayon-64.png" alt="logo crayon" />
-                            </button>
-                        </div>
-                        <div className="flex items-center justify-center">
-                            <button className="bg-white m-1 w-8">
-                                <img className='w-full h-full' src=".\img\icons8-eraser-64.png" alt="logo gomme" />
-                            </button>
-
-                        </div>
-                        {/* <div className="flex items-center justify-center">
-                            <button className="bg-white m-1 w-8" onClick={() => setFillingMode(true)}>
-                                <img className='w-full h-full' src=".\img\icons8-bucket-64.png" alt="logo sceau" />
-                            </button>
-                        </div> */}
-                        <div className="flex items-center justify-center">
-                            <button onClick={() => changeLineWidth(35)} className="bg-white m-1 w-8 h-8 flex items-center justify-center">
-                                <div className="rounded-full bg-black w-7 h-7"></div>
-                            </button>
-                        </div>
-                        <div className="flex items-center justify-center">
-                            <button onClick={() => changeLineWidth(25)} className="bg-white m-1 w-8 h-8 flex items-center justify-center">
-                                <div className="rounded-full bg-black w-6 h-6"></div>
-                            </button>
-                        </div>
-                        <div className="flex items-center justify-center">
-                            <button onClick={() => changeLineWidth(15)} className="bg-white m-1 w-8 h-8 flex items-center justify-center">
-                                <div className="rounded-full bg-black w-4 h-4"></div>
-                            </button>
-                        </div>
-                        <div className="flex items-center justify-center">
-                            <button onClick={() => changeLineWidth(5)} className="bg-white m-1 w-8 h-8 flex items-center justify-center">
-                                <div className="rounded-full bg-black w-2 h-2"></div>
-                            </button>
-                        </div>
-                        <div className="flex items-center justify-center">
-                            <button className="bg-white m-1 w-8" onClick={() => clearCanvas()}>
-                                <img className='w-full h-full' src=".\img\icons8-bin-60.png" alt="logo poubelle" />
-                            </button>
-                        </div>
-                    </div>
-                    :
-                    null
-            }
         </div >
     );
 };

@@ -69,7 +69,7 @@ const io = new Server(server, {
 
 const Room = require('../controllers/Rooms.js');
 const Canvas = require('../controllers/Canvas');
-//const Disconnect = require('../controllers/Disconnect');
+const Disconnect = require('../controllers/Disconnect');
 const Game = require('../controllers/Game');
 
 io.on("connection", (socket) => {
@@ -79,6 +79,7 @@ io.on("connection", (socket) => {
         new Room(io, socket).createPrivateRoom(player)
     });
 
+    socket.on('startCountdown', async (data) => { await new Room(io, socket).startCountdown(data); });
     socket.on('joinRoom', async (data) => { await new Room(io, socket).joinRoom(data); });
     socket.on('players', async (data) => { await new Room(io, socket).players(data); });
     socket.on('selectGame', async (data) => { await new Room(io, socket).selectGame(data); });
@@ -90,7 +91,9 @@ io.on("connection", (socket) => {
     socket.on('getPlayers', async (roomID) => { await new Game(io, socket).getPlayers(roomID); });
     // socket.on('choosenWord', async (data) => { await new Game(io, socket).chosenWord(data); });
     socket.on('message', (data) => new Game(io, socket).onMessage(data));
-    // //socket.on('disconnect', () => new Disconnect(io, socket).onDisconnect());
+    //socket.on('disconnect', () => new Disconnect(io, socket).onDisconnect());
+    socket.on('disconnect', () => new Game(io, socket).onDisconnect());
+    socket.on('disconnect', () => new Room(io, socket).onDisconnect());
 
 
     socket.on('draw', (data) => new Canvas(io, socket).draw(data));
