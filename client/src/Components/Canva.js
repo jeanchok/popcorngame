@@ -1,11 +1,10 @@
 import { emit } from "process";
 import React, { useEffect, useContext, useRef, useState } from "react";
-//import { socket } from "../context/socket";
-import { LazyBrush } from 'lazy-brush';
 import { useSocket } from "../context/socket";
+import { colors1, colors2 } from "../constant/const";
 
 const Canva = ({ playersList }) => {
-    const socket = useSocket();
+    const [socket] = useSocket();
     const [isDrawing, setIsDrawing] = useState(false);
     const [isChoosingWord, setIsChoosingWord] = useState(false);
     const [drawerisChoosing, setDrawerisChoosing] = useState(false);
@@ -25,64 +24,11 @@ const Canva = ({ playersList }) => {
     const [fillPaths, setFillPaths] = useState([]);
     //const [points, setPoints] = useState([]);
     const [canvasPaths, setCanvasPaths] = useState([]);
-
     const socketRef = useRef();
 
-    useEffect(() => {
-        prepareCanvas();
-        prepareCanvasDrawer();
-
-    }, []);
-
-    const colors1 = [{ name: 'white', value: 'white' }, { name: 'slate-400', value: 'rgb(148 163 184)' },
-    { name: 'red-400', value: 'rgb(252 165 165)' },
-    { name: 'orange-400', value: 'rgb(251 146 60)' },
-    { name: 'yellow-400', value: 'rgb(250 204 21)' },
-    { name: 'green-400', value: 'rgb(74 222 128)' },
-    { name: 'blue-400', value: 'rgb(96 165 250)' },
-    { name: 'purple-400', value: 'rgb(192 132 252)' },
-    { name: 'pink-400', value: 'rgb(244 114 182)' }];
-
-    const colors2 = [{ name: 'black', value: 'black' }, { name: 'slate-700', value: 'rgb(51 65 85)' },
-    { name: 'red-700', value: 'rgb(185 28 28)' }, { name: 'orange-700', value: 'rgb(194 65 12)' }
-        , { name: 'yellow-700', value: 'rgb(161 98 7)' }, { name: 'green-700', value: 'rgb(21 128 61)' }
-        , { name: 'blue-700', value: 'rgb(29 78 216)' }, { name: 'purple-700', value: 'rgb(126 34 206)' }
-        , { name: 'pink-700', value: 'rgb(190 24 93)' }
-    ]
-
-
-    const prepareCanvas = () => {
-        // const canvas = canvasRef.current;
-        // canvas.width = canvas.clientWidth * 2;
-        // canvas.height = canvas.clientHeight * 2;
-        // canvas.style.width = canvas.width;
-        // canvas.style.height = canvas.height;
-
-        // const context = canvas.getContext("2d");
-        // context.scale(2, 2);
-        //context.lineCap = "round";
-        // context.strokeStyle = currentColor;
-        // context.lineWidth = currentLineWidth;
-        // contextRef.current = context;
-
-
-    };
-
-    const prepareCanvasDrawer = () => {
-
-
-        //const canvasDrawer = canvasDrawerRef.current;
-        // canvasDrawer.width = canvasDrawer.clientWidth * 2;
-        // canvasDrawer.height = canvasDrawer.clientHeight * 2;
-        // canvasDrawer.style.width = canvasDrawer.width;
-        // canvasDrawer.style.height = canvasDrawer.height;
-
-
-    };
 
     useEffect(() => {
         // --------------- getContext() method returns a drawing context on the canvas-----
-
 
         const canvas = canvasRef.current;
         canvas.width = canvas.clientWidth * 2;
@@ -95,7 +41,7 @@ const Canva = ({ playersList }) => {
         context.scale(2, 2);
         context.lineCap = "round";
         context.strokeStyle = 'black';
-        context.lineWidth = 25;
+        context.lineWidth = 15;
         contextRef.current = context;
         setCurrentColor('black');
 
@@ -123,27 +69,13 @@ const Canva = ({ playersList }) => {
 
         let drawing = false;
 
+
         // ------------------------------- create the drawing ----------------------------
         let points = [];
 
         const drawLine = (x0, y0, x1, y1, color, size, emit) => {
-            console.log('drawing', 'color', color, 'size', size);
             context.beginPath();
             context.moveTo(x0, y0);
-            // points.push({ x: x1, y: y1 });
-            // let p1 = points[0];
-            // let p2 = points[1];
-            // if (p2) {
-            //     context.moveTo(p2.x, p2.y);
-            // }
-            // //context.beginPath();
-            // for (let i = 1, len = points.length; i < len; i++) {
-            //     const midPoint = midPointBtw(p1, p2);
-            //     context.quadraticCurveTo(p1.x, p1.y, midPoint.x, midPoint.y);
-            //     p1 = points[i];
-            //     p2 = points[i + 1];
-            // }
-            // context.lineTo(p1.x, p1.y);
             context.lineTo(x1, y1);
             //context.strokeStyle = current.color;
             // context.lineWidth = size;
@@ -186,7 +118,6 @@ const Canva = ({ playersList }) => {
             drawLine(current.x, current.y, e.clientX - bounding.left || e.touches[0].clientX - bounding.left, e.clientY - bounding.top || e.touches[0].clientY - bounding.top, current.color, currentLineWidth, true);
             current.x = e.clientX - bounding.left || e.touches[0].clientX - bounding.left;
             current.y = e.clientY - bounding.top || e.touches[0].clientY - bounding.top;
-            console.log('currentColor', current.color)
         };
 
         const onMouseUp = (e) => {
@@ -211,7 +142,6 @@ const Canva = ({ playersList }) => {
         };
 
         // -----------------add event listeners to our canvas ----------------------
-
         canvas.addEventListener('mousedown', onMouseDown, false);
         canvas.addEventListener('mouseup', onMouseUp, false);
         canvas.addEventListener('mouseout', onMouseUp, false);
@@ -236,24 +166,18 @@ const Canva = ({ playersList }) => {
 
         // ----------------------- socket.io connection ----------------------------
         const onDrawingEvent = (data) => {
-            //console.log(data)
             const w = canvas.width;
             const h = canvas.height;
             drawLine(data.x0 * w, data.y0 * h, data.x1 * w, data.y1 * h, data.color, data.size);
+
         }
-        //socket.on('drawing', onDrawingEvent);
 
         socketRef.current = socket;
         socket.on('drawing', onDrawingEvent);
     }, [socket]);
 
-
     useEffect(() => {
         socket.on('hideWord', ({ word }) => {
-            console.log('hideWord')
-            //console.log('hideWord', word);
-            //setDrawerisChoosing(false);
-            // setIsChoosingWord(false);
             setWordToGuess(word);
         });
 
@@ -283,17 +207,13 @@ const Canva = ({ playersList }) => {
         })
 
         socket.on('chooseWord', async ([word1, word2, word3]) => {
-            console.log('chooseWord')
             setIsThedrawer(true);
             await setDrawerisChoosing(false);
             await setIsChoosingWord(true);
             setWordsChoice([word1, word2, word3]);
-
-
         });
 
         socket.on('choosing', async ({ name }) => {
-            console.log('choosing')
             setIsThedrawer(false);
             let drawer = playersList.find(player => player.playerId === name);
             await setDrawerisChoosing(true);
@@ -307,32 +227,11 @@ const Canva = ({ playersList }) => {
 
 
 
-
-
-
-
-
     const chooseWord = async (words) => {
         await setIsChoosingWord(false);
         await setWordToGuess(words);
-        console.log('chooseWord')
         socket.emit('chooseWord', { words, RoomId });
     };
-
-    // if (isThedrawer) {
-    //     let canvas = canvasRef.current;
-    //     // canvas.addEventListener('touchstart', startDrawing, false);
-    //     // canvas.addEventListener('touchend', finishDrawing, false);
-    //     // canvas.addEventListener('touchmove', throttle(draw, 6), false);
-    //     if (canvas.width < 1000) {
-    //         canvas.addEventListener('mousedown', onMouseDown, false);
-    //         canvas.addEventListener('mouseup', finishDrawing, false);
-    //     }
-
-    //     //canvas.addEventListener('mousemove', throttle(draw, 6), false);
-
-    // }
-
 
     const clearCanvas = () => {
 
@@ -369,19 +268,19 @@ const Canva = ({ playersList }) => {
 
     return (
         <div className='w-2/3 w-full md:h-auto h-full flex flex-col'>
-            {
-                isChoosingWord ?
-                    <h2 className='text-white  font-semibold text-center pb-4 pt-4 border-red-400 border-l-2 border-r-2 text-xl h-auto md:h-[12%]'>CHOISISSEZ UNE EXPRESSION !</h2> :
-                    drawerisChoosing ?
-                        <h2 className='text-white font-semibold text-center pb-4 pt-4 border-red-400 border-l-2 border-r-2 text-xl h-auto md:h-[12%]'>L'EXPRESSION EST EN TRAIN DE CHARGER...</h2> :
-                        wordToGuess ?
-                            <h2 className='text-white font-semibold text-center pb-4 pt-4 border-red-400 border-l-2 border-r-2 text-xl h-auto md:h-[12%]'>{capitalizeFirstLetter(wordToGuess)}</h2> :
+            <h2 className='text-white  font-semibold text-center pb-4 pt-4 border-red-400 border-l-2 border-r-2 text-xl h-auto md:h-[12%]'>{
+                isChoosingWord ? 'CHOISISSEZ UNE EXPRESSION !'
+                    :
+                    drawerisChoosing ? `L'EXPRESSION EST EN TRAIN DE CHARGER...`
+                        :
+                        wordToGuess ? capitalizeFirstLetter(wordToGuess)
+                            :
                             null
-            }
+            }</h2>
             <div className='flex flex-col justify-between w-full md:h-[88%] h-full'>
                 <div className=' flex flex-row m-auto justify-center align-center items-center mb-0 h-full w-full' >
                     {isChoosingWord ?
-                        <div className={"flex align-center justify-center h-[250px] w-[450px] rounded-xl bg-neutral-800 z-10 absolute "}>
+                        <div className={"flex align-center justify-center md:h-[250px] md:w-[450px] w-[90%] rounded-xl bg-neutral-800 z-10 absolute "}>
                             <div className="flex flex-col  align-center justify-center  gap-y-4 p-4">
                                 {wordsChoice.map((words, index) =>
                                     <div className="flex items-center" key={index}>
@@ -414,18 +313,12 @@ const Canva = ({ playersList }) => {
                     {
                         isThedrawer ?
                             <canvas className="h-full w-full bg-white"
-                                // onMouseDown={startDrawing}
-                                // onMouseUp={finishDrawing}
-                                // onMouseMove={throttle(draw, 6)}
-                                //touchStart={startDrawing}
-
-                                //onClick={fillingMode ? (e) => fillDrawing(e) : null}
                                 ref={canvasRef}
                             />
                             :
                             <canvas className="h-full w-full bg-white"
-
                                 ref={canvasRef}
+                                style={{ pointerEvents: "none" }}
                             />
                     }
 
@@ -434,7 +327,7 @@ const Canva = ({ playersList }) => {
                     isThedrawer ?
 
                         <div className="bg-white flex space-around justify-center border-t-2 border-red-400">
-                            <div className="flex items-center justify-center">
+                            <div className="md:flex items-center justify-center hidden">
                                 <div className={"p-4 m-1 bg-" + currentColor} style={{ backgroundColor: currentColor }} >
                                 </div>
                             </div>
@@ -456,19 +349,13 @@ const Canva = ({ playersList }) => {
                                     <img className='w-full h-full' src=".\img\icons8-crayon-64.png" alt="logo crayon" />
                                 </button>
                             </div>
-                            <div className="flex items-center justify-center">
+                            <div className="md:flex items-center justify-center hidden">
                                 <button onClick={() => { changeColor('white'); setCurrentColor('white') }} className=" m-1 w-8">
                                     <img className='w-full h-full' src=".\img\icons8-eraser-64.png" alt="logo gomme" />
                                 </button>
-
                             </div>
-                            {/* <div className="flex items-center justify-center">
-                            <button className="bg-white m-1 w-8" onClick={() => setFillingMode(true)}>
-                                <img className='w-full h-full' src=".\img\icons8-bucket-64.png" alt="logo sceau" />
-                            </button>
-                        </div> */}
                             <div className="flex items-center justify-center">
-                                <button onClick={() => changeLineWidth(35)} className=" m-1 w-8 h-8 flex items-center justify-center">
+                                <button onClick={() => changeLineWidth(35)} className="m-1 w-8 h-8 flex items-center justify-center">
                                     <div className="rounded-full bg-black w-7 h-7"></div>
                                 </button>
                             </div>
@@ -497,12 +384,7 @@ const Canva = ({ playersList }) => {
                         null
                 }
             </div>
-
-
-
-
-
-        </div >
+        </div>
     );
 };
 

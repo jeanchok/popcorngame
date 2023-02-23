@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useSocket } from "../context/socket";
 
 const Timer = (props) => {
-    const socket = useSocket();
+    const [socket] = useSocket();
     const [seconds, setSeconds] = useState(props.time / 1000);
     const [startTimer, setStartTimer] = useState(false);
 
@@ -29,8 +29,8 @@ const Timer = (props) => {
         <>
             {
                 (seconds > 0) ?
-                    <div className='flex justify-center mb-2 mt-5 border border-white font-bold text-white py-1 px-2 text-xl z-20 bg-zinc-800 md:relative absolute'>{seconds}</div>
-                    : <div className='flex justify-center mb-2 mt-5 h-[41px] py-1 px-2 text-xl'></div>
+                    <div className='flex justify-center mb-2 mt-5 border border-white font-bold text-white py-1 px-2 text-xl z-20 bg-zinc-800 md:relative absolute top-[54%] left-[2%]'>{seconds}</div>
+                    : <div className='md:flex justify-center mb-2 mt-5 h-[41px] py-1 px-2 text-xl hidden'></div>
             }
         </>
     );

@@ -24,7 +24,7 @@ class Room {
         //games[id][socket.id].name = player.name;
         //games[id][socket.id].avatar = player.avatar;
         //console.log('games here', games);
-
+        if (data.playerUsername.length < 1) { return; }
         socket.playerUsername = data.playerUsername;
         socket.playerAvatarIndex = data.playerAvatarIndex
         socket.roomID = id;
@@ -36,14 +36,10 @@ class Room {
 
     async joinRoom(data) {
         const { io, socket } = this;
+        if (data.player.length < 1) { return; }
         const roomID = data.id;
         const players = Array.from(await io.in(roomID).allSockets());
 
-
-        // games[roomID][socket.id] = {};
-        // games[roomID][socket.id].score = 0;
-        //games[roomID][socket.id].name = data.player.name;
-        // games[roomID][socket.id].avatar = data.player.avatar;
         socket.player = data.player;
         socket.playerAvatarIndex = data.playerAvatarIndex
         socket.join(roomID);

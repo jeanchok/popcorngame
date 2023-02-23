@@ -78,9 +78,22 @@
    }
  }
 
+ #gamesSvg {
+   stroke-dasharray: 24;
+   stroke-dashoffset: 24;
+   animation: animateSvg 4s ease;
+   animation-fill-mode: forwards;
+ }
+
+ @keyframes animateSvg {
+   to {
+     stroke-dashoffset: 0;
+   }
+ }
+
  /* Custom cursor canvas {
   cursor: url('./img/paintbrush.png'), auto;
-} */
+}
 
  /* HomagePage Animations */
  .micIcone {}

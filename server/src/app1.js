@@ -63,6 +63,8 @@ const io = new Server(server, {
     },
 });
 
+
+
 // import Room from '../controllers/Rooms.js';
 // import Canvas from '../controllers/Canvas.js';
 // import Game from '../controllers/Game.js';
@@ -73,6 +75,7 @@ const Disconnect = require('../controllers/Disconnect');
 const Game = require('../controllers/Game');
 
 io.on("connection", (socket) => {
+    socket.setMaxListeners(15);
     console.log(`User Connected: ${socket.id}`);
 
     socket.on('newPrivateRoom', (player) => {

@@ -8,7 +8,7 @@ import { avatars } from "../constant/const.js"
 
 
 const JoinGame = () => {
-    const socket = useSocket();
+    const [socket] = useSocket();
     const [playerUsername, setPlayerUsername] = useState("");
     const [playerAvatarIndex, setPlayerAvatarIndex] = useState(0);
     const [response, setResponse] = useState("");
@@ -72,6 +72,7 @@ const JoinGame = () => {
                 <input className='mt-4 placeholder:italic bg-transparent placeholder:text-white text-white block bg-white w-full border border-red-300 py-2 px-4 pl-2 pr-3 shadow-sm focus:outline-none focus:border-red-300 focus:ring-red-300 focus:ring-1 sm:text-sm'
                     type='text'
                     placeholder='Ponce...'
+                    required
                     onChange={(e) => { setPlayerUsername(e.target.value) }}>
                 </input>
             </div>

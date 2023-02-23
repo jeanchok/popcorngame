@@ -30,21 +30,24 @@ export function useSocket() {
     return useContext(SocketContext)
 }
 
-export function useSocketReconnect() {
-    return useContext(SocketReconnectContext)
-}
+// export function useSocketReconnect() {
+//     return useContext(SocketReconnectContext)
+// }
 
 export function SocketContextProvider({ children }) {
     const [socket, setSocket] = useState(io('http://localhost:3001/'));
 
 
-    // async function reconnect(haveTo) {
-    //         await socket.disconnect();
-    //         setSocket(io('http://localhost:3001/'))
+    // async function reconnect() {
+    //     console.log('reconnecting');
+    //     await socket.disconnect();
+    //     setSocket(io('http://localhost:3001/'))
     // }
 
     return (
-        <SocketContext.Provider value={socket}>
+        <SocketContext.Provider value={[socket,
+            //reconnect
+        ]}>
             {children}
             {/* <SocketReconnectContext.Provider value={reconnect}>
                 {children}

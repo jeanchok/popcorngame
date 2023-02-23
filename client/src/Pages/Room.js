@@ -15,7 +15,7 @@ import SoundButton from '.././Components/SoundButton';
 import { useSoundOn } from '.././context/SoundContext';
 
 const Room = () => {
-    const socket = useSocket();
+    const [socket] = useSocket();
     const soundOn = useSoundOn();
     const [startSound, setStartSound] = useState(false);
     //const gameId = sessionStorage.getItem('id');
@@ -178,7 +178,7 @@ const Room = () => {
         // }
     }
 
-    socket.on('startCountdown', async () => {
+    socket.once('startCountdown', async () => {
         console.log('startCountdown')
         setStartSound(true);
         await setStartCountdownOverlay(true);
@@ -198,23 +198,9 @@ const Room = () => {
 
     const startGame = async () => {
         if (selectedGame1) {
-            console.log('here obj', { id: paramId, players: players });
             socket.emit('startPicass', { id: sessionId, players: players });
         }
     }
-
-    // useEffect(() => {
-    //     const unloadCallback = (event) => {
-    //         event.preventDefault();
-    //         event.returnValue = "";
-    //         return "";
-    //     };
-
-    //     window.addEventListener("beforeunload", unloadCallback);
-    //     return () => window.removeEventListener("beforeunload", unloadCallback);
-    // }, []);
-
-
 
     return (
         <>
@@ -225,7 +211,7 @@ const Room = () => {
                 <Header />
                 <img className='object-cover absolute h-screen w-screen bg-object bg-cover -z-10 top-0' src=".\img\fondpop.png" alt="popcorn rouge fond" />
                 <div className='bg-black/25 w-screen h-2/4 -z-10 absolute top-0'></div>
-                <section className='max-w-screen-xl bg-center justify-center md:w-[65%] md:h-[45%] w-[90%] h-[60%] mt-9o
+                <section className='max-w-screen-xl bg-center justify-center md:w-[60%] md:h-[50%] w-[90%] h-[60%] mt-9o
                  flex content-center z-10 relative fade-in  backdrop-blur'>
                     <div className='absolute -top-[68px] left-[15%]'>
                         <BackButton to={"/"} state={false} />
@@ -244,7 +230,7 @@ const Room = () => {
                                 <div className='md:w-[80%] flex flex-col h-full justify-between'>
 
 
-                                    <div className='md:h-full h-[75%] flex flex-row md:mt-8 justify-between md:p-0 p-6 mb-0 gap-4 overflow-x-auto'>
+                                    <div className='md:h-full h-[75%] flex flex-row justify-between p-6 mb-0 gap-4 overflow-x-auto'>
                                         {/* {games.map((game) =>
                                         <button key={game} onClick={selectGame} className={selectedGame ? 'bg-red h-full' : 'bg-white h-full'}>
                                             <h3 className='flex justify-center h-full items-center'>{game}</h3>
@@ -316,9 +302,9 @@ const Room = () => {
                                         }
 
                                     </div>
-                                    <div className='flex w-full md:m-auto justify-around md:mt-10 relative md:p-0 pb-5'>
+                                    <div className='flex w-full md:m-auto justify-around md:mt-10 md:mb-10 relative md:p-0 pb-5'>
 
-                                        <button className=' bg-white hover:bg-red-500 text-red-500 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent mt-4 w-1/3 transition relative' type='submit' value='Démarrer' onClick={copyLink}>INVITER
+                                        <button className=' bg-white hover:bg-red-500 text-red-500 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent mt-4 w-1/3 transition relative flex justify-center' type='submit' value='Démarrer' onClick={copyLink}>INVITER
                                             {
                                                 toggleBubleCopyLink ?
                                                     <div className='text-white p-1 absolute -bottom-8 left-[25%]'>
@@ -328,7 +314,7 @@ const Room = () => {
                                             }
                                         </button>
                                         {isHosting === '1' ?
-                                            <button className=' bg-white hover:bg-red-500 text-red-500 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent mt-4 w-1/3 transition' type='submit' value='Démarrer' onClick={launchGame}>DEMARRER
+                                            <button className=' bg-white hover:bg-red-500 text-red-500 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent mt-4 w-1/3 transition flex justify-center' type='submit' value='Démarrer' onClick={launchGame}>DEMARRER
                                                 {
                                                     (gameErrorMessage != "") ?
                                                         <div className='text-white p-1 absolute -bottom-8 left-[25%]'>

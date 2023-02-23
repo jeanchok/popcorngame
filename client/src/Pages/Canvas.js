@@ -7,7 +7,6 @@ import { useSocket } from "../context/socket";
 
 import Chat from "../Components/Chat";
 import PlayerList from "../Components/PlayerList";
-import ClearCanvasButton from "../Components/ClearCanvasButton";
 import Canva from "../Components/Canva";
 import Timer from "../Components/Timer";
 import Paricules from "../Components/Paricules";
@@ -17,7 +16,7 @@ import SoundButton from '.././Components/SoundButton';
 import { useSoundOn } from '.././context/SoundContext';
 
 export function Canvas() {
-    const socket = useSocket();
+    const [socket] = useSocket();
     const { state } = useLocation();
     const [playersList, setPlayersList] = useState(state);
     const [playersListUpdatedScore, setPlayersListUpdatedScore] = useState();
@@ -106,7 +105,7 @@ export function Canvas() {
 
         <>
 
-            <main className='flex flex-col items-center gap-2 h-full m-auto relative'>
+            <main className='flex flex-col items-center md:gap-2 h-full m-auto relative'>
                 <div className="md:block hidden">
                     <Header />
                 </div>
@@ -127,7 +126,7 @@ export function Canvas() {
                             <div className="w-20 absolute right-[15%] -top-[72px] mb:block hidden">
                                 <SoundButton />
                             </div>
-                            <div className='mt-4 min-h-[70%] border-white/20 border bg-slate-50 bg-opacity-10 flex rounded-md backdrop-blur-sm md:w-auto w-full flex-col md:flex-row'>
+                            <div className=' min-h-[70%] border-white/20 border bg-slate-50 bg-opacity-10 flex rounded-md backdrop-blur-sm md:w-auto w-full flex-col md:flex-row'>
 
                                 <PlayerList playersList={playersList} />
 
