@@ -11,7 +11,7 @@ export function useSoundUpdate() {
 }
 
 export function SoundContextProvider({ children }) {
-    const [soundOn, setSoundOn] = useState(true)
+    const [soundOn, setSoundOn] = useState(false)
 
     function toggleSoundOn() {
         setSoundOn(prevSoundOn => !prevSoundOn)

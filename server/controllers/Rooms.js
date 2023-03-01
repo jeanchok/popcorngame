@@ -14,24 +14,12 @@ class Room {
     createPrivateRoom(data) {
         const { socket } = this;
         const id = uuidv4();
-        // let games = {};
-        // games[id] = {
-        //     rounds: 2,
-        //     time: 40 * 1000,
-        // };
-        // games[id][socket.id] = {};
-        // games[id][socket.id].score = 0;
-        //games[id][socket.id].name = player.name;
-        //games[id][socket.id].avatar = player.avatar;
-        //console.log('games here', games);
         if (data.playerUsername.length < 1) { return; }
         socket.playerUsername = data.playerUsername;
         socket.playerAvatarIndex = data.playerAvatarIndex
         socket.roomID = id;
         socket.join(id);
         socket.emit('newPrivateRoom', { gameID: id, userName: data.playerUsername, id: socket.id, playerAvatarIndex: data.playerAvatarIndex });
-        console.log('playerUsername', socket.playerUsername, socket.playerAvatarIndex);
-        console.log('done');
     }
 
     async joinRoom(data) {
@@ -39,7 +27,6 @@ class Room {
         if (data.player.length < 1) { return; }
         const roomID = data.id;
         const players = Array.from(await io.in(roomID).allSockets());
-
         socket.player = data.player;
         socket.playerAvatarIndex = data.playerAvatarIndex
         socket.join(roomID);
@@ -49,6 +36,7 @@ class Room {
         console.log(' data:', data, 'players:', io.sockets.adapter.rooms.get(roomID), 'socket', socket.player);
         socket.emit('otherPlayers',
             players.reduce((acc, id) => {
+                console.log('otherPlayers', socket.id !== id)
                 if (socket.id !== id) {
                     const { player } = io.of('/').sockets.get(id);
                     acc.push(player);
@@ -65,7 +53,7 @@ class Room {
         const roomID = data.id;
         const players = data.players;
         socket.roomID = roomID;
-        console.log('players', players);
+        console.log('players', players, 'roomID', roomID, "data", data);
         socket.to(roomID).emit('players', players);
     }
     /* Explain the previous function: */
@@ -92,6 +80,46 @@ class Room {
         const { io, socket } = this;
         let roomID = data.roomID;
         io.in(roomID).emit('startCountdown');
+    }
+
+    restartToRoom(data) {
+        const { io, socket } = this;
+        let roomID = data.roomID;
+        console.log("restartToRoomback", data.roomID);
+        socket.broadcast.emit('restartToRoom', data);
+    }
+
+    restartExistingRoom(data) {
+        const { socket } = this;
+        socket.playerUsername = data.playerUsername;
+        socket.playerAvatarIndex = data.playerAvatarIndex
+        socket.roomID = data.roomID;
+        console.log("restartExistingRoom", data.roomID, 'data', data);
+        socket.emit('restartExistingRoom', { gameID: data.roomID, userName: data.playerUsername, id: socket.id, playerAvatarIndex: data.playerAvatarIndex });
+    }
+
+    async joinExistingRoom(data) {
+        const { io, socket } = this;
+        const roomID = data.roomID;
+        const players = Array.from(await io.in(roomID).allSockets());
+        socket.player = data.player;
+        socket.playerAvatarIndex = data.playerAvatarIndex
+        socket.roomID = roomID;
+        data.playerId = socket.id;
+
+        socket.to(roomID).emit('joinExistingRoom', data);
+        console.log(' data:', data, 'players:', io.sockets.adapter.rooms.get(roomID), 'socket', socket.player);
+        socket.emit('otherPlayers',
+            players.reduce((acc, id) => {
+                console.log('otherPlayers2', socket.id !== id);
+                if (socket.id !== id) {
+                    const { player } = io.of('/').sockets.get(id);
+                    acc.push(player);
+                    console.log('players', io.in(roomID).allSockets());
+                }
+                console.log(acc);
+                return acc;
+            }, []));
     }
 
     onDisconnect() {

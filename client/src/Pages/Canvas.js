@@ -14,6 +14,7 @@ import ResultsGameOverlay from "../Components/ResultsGameOverlay";
 import BackButton from "../Components/BackButton";
 import SoundButton from '.././Components/SoundButton';
 import { useSoundOn } from '.././context/SoundContext';
+import { useUser, useUserUpdate } from '.././context/user';
 
 export function Canvas() {
     const [socket] = useSocket();
@@ -31,25 +32,18 @@ export function Canvas() {
     const [startSoundEndGame, setStartSoundEndGame] = useState(false);
     let roundEndSound = new Audio("/sounds/roundEnd.mp3")
     let endGameSound = new Audio("/sounds/finish.mp3")
-    let sessionId = sessionStorage.getItem('id');
-    // if (startSoundRoundEnd && soundOn) {
-    //     roundEndSound.play();
-    // }
+    const user = useUser();
+    const [sessionId, setSessionId] = useState(user.gameId);
+
+    useEffect(() => {
+        setSessionId(user.gameId);
+        console.log('useEffectRoomId: ' + user.gameId);
+    }, [user.gameId]);
+    //let sessionId = sessionStorage.getItem('id');
 
     if (startSoundEndGame && soundOn) {
         endGameSound.play();
     }
-
-    // useEffect(() => {
-    //     const unloadCallback = (event) => {
-    //         event.preventDefault();
-    //         event.returnValue = "";
-    //         return "";
-    //     };
-
-    //     window.addEventListener("beforeunload", unloadCallback);
-    //     return () => window.removeEventListener("beforeunload", unloadCallback);
-    // }, []);
 
     socket.on('startTimer', ({ time }) => {
         setEndTime(false);
@@ -64,12 +58,9 @@ export function Canvas() {
         );
     })
 
-
     socket.on('updateScore', (data) => {
         let drawer = playersList.find(player => player.playerId === data.drawerID.name.playerId);
         drawer.score = data.drawerID.score;
-
-
         let player = playersList.find(player => player.playerId === data.playerID);
         player.score = data.score;
         setPlayersList([...playersList]);
@@ -114,14 +105,14 @@ export function Canvas() {
                 {time > 0 ? <Timer time={time} /> : <div className=' justify-center mb-2 mt-5 h-[41px] py-1 px-2 text-xl md:flex hidden'></div>}
                 {
                     endGame ?
-                        <ResultsGameOverlay winnerName={winnerName} playersList={playersList} />
+                        <ResultsGameOverlay winnerName={winnerName} playersList={playersList} roomID={sessionId} />
                         :
 
 
                         <section className='max-w-screen-xl bg-center justify-center md:w-auto w-full md:h-[60%] h-[100%] mt-9o
                  flex content-center z-10 relative fade-in  backdrop-blur'>
                             <div className='absolute -top-[68px] left-[2%] md:block hidden'>
-                                <BackButton to={"/"} state={false} />
+                                <BackButton to={"/"} state={false} roomID={null} />
                             </div>
                             <div className="w-20 absolute right-[15%] -top-[72px] mb:block hidden">
                                 <SoundButton />

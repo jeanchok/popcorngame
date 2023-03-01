@@ -2,8 +2,10 @@ import { emit } from "process";
 import React, { useEffect, useContext, useRef, useState } from "react";
 import { useSocket } from "../context/socket";
 import { colors1, colors2 } from "../constant/const";
+import { useUser, useUserUpdate } from '.././context/user';
 
 const Canva = ({ playersList }) => {
+    const user = useUser();
     const [socket] = useSocket();
     const [isDrawing, setIsDrawing] = useState(false);
     const [isChoosingWord, setIsChoosingWord] = useState(false);
@@ -20,11 +22,21 @@ const Canva = ({ playersList }) => {
     const canvasRef = useRef(null);
     const contextRef = useRef(null);
     const canvasDrawerRef = useRef(null);
-    let RoomId = sessionStorage.getItem('id');
+    //const RoomIdRef = useRef(null);
+    //let RoomId = user.gameId;
+    const [RoomId, setRoomId] = useState(user.gameId);
+
     const [fillPaths, setFillPaths] = useState([]);
     //const [points, setPoints] = useState([]);
     const [canvasPaths, setCanvasPaths] = useState([]);
     const socketRef = useRef();
+
+    useEffect(() => {
+        setRoomId(user.gameId);
+        console.log('useEffectRoomId: ' + RoomId);
+    }, [user.gameId]);
+
+
 
 
     useEffect(() => {
@@ -176,10 +188,12 @@ const Canva = ({ playersList }) => {
         socket.on('drawing', onDrawingEvent);
     }, [socket]);
 
+
+
     useEffect(() => {
-        socket.on('hideWord', ({ word }) => {
-            setWordToGuess(word);
-        });
+        // socket.on('hideWord', ({ word }) => {
+        //     setWordToGuess(word);
+        // });
 
 
         socket.on('changeColor', async (data) => {
@@ -206,12 +220,13 @@ const Canva = ({ playersList }) => {
             // context.fillRect(0, 0, canvas.width, canvas.height);
         })
 
-        socket.on('chooseWord', async ([word1, word2, word3]) => {
-            setIsThedrawer(true);
-            await setDrawerisChoosing(false);
-            await setIsChoosingWord(true);
-            setWordsChoice([word1, word2, word3]);
-        });
+        // socket.on('chooseWord', async ([word1, word2, word3]) => {
+        //     setIsThedrawer(true);
+        //     await setDrawerisChoosing(false);
+        //     await setIsChoosingWord(true);
+        //     setWordsChoice([word1, word2, word3]);
+        //     console.log('chooseWordOn')
+        // });
 
         socket.on('choosing', async ({ name }) => {
             setIsThedrawer(false);
@@ -220,16 +235,61 @@ const Canva = ({ playersList }) => {
             setDrawer(drawer.name);
         });
 
-        socket.on('startTimer', () => {
-            setDrawerisChoosing(false);
-        })
+        // socket.on('startTimer', () => {
+        //     setDrawerisChoosing(false);
+        // })
+
+
     }, [socket]);
 
+    useEffect(() => {
+
+        const chooseWord = async ([word1, word2, word3]) => {
+            setIsThedrawer(true);
+            await setDrawerisChoosing(false);
+            await setIsChoosingWord(true);
+            setWordsChoice([word1, word2, word3]);
+            console.log('chooseWordOn')
+        }
+
+        socket.on('chooseWord', chooseWord);
+
+        return () => {
+            socket.off("chooseWord", chooseWord);
+        };
+    }, [socket]);
+
+    useEffect(() => {
+        const hideWord = ({ word }) => {
+            setWordToGuess(word);
+        }
+
+        socket.on('hideWord', hideWord);
+
+        return () => {
+            socket.off("hideWord", hideWord);
+        };
+    }, [socket]);
+
+
+    useEffect(() => {
+        const startTimer = () => {
+            setDrawerisChoosing(false);
+            console.log('startTimer')
+        }
+
+        socket.on('startTimer', startTimer)
+
+        return () => {
+            socket.off("startTimer", startTimer);
+        };
+    }, [socket]);
 
 
     const chooseWord = async (words) => {
         await setIsChoosingWord(false);
         await setWordToGuess(words);
+        console.log('chooseWord', RoomId)
         socket.emit('chooseWord', { words, RoomId });
     };
 
@@ -325,7 +385,6 @@ const Canva = ({ playersList }) => {
                 </div>
                 {
                     isThedrawer ?
-
                         <div className="bg-white flex space-around justify-center border-t-2 border-red-400">
                             <div className="md:flex items-center justify-center hidden">
                                 <div className={"p-4 m-1 bg-" + currentColor} style={{ backgroundColor: currentColor }} >
@@ -343,7 +402,6 @@ const Canva = ({ playersList }) => {
                                     ))}
                                 </div>
                             </div>
-
                             <div className="flex items-center justify-center">
                                 <button className=" m-1 w-8" onClick={() => setFillingMode(false)}>
                                     <img className='w-full h-full' src=".\img\icons8-crayon-64.png" alt="logo crayon" />

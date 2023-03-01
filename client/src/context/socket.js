@@ -1,26 +1,6 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useState, useEffect, useRef } from 'react'
 import io from "socket.io-client";
-//import { SOCKET_URL } from "config";
 
-//export const socket = io('http://localhost:3001/');
-
-//export const [socket, setSocket] = useState(io('http://localhost:3001/'));
-
-//const SocketContext = React.createContext(socket);
-
-// export async function socketReconnect(socket) {
-//     await socket.disconnect();
-//     setSocket(io('http://localhost:3001/'));
-// }
-
-// export async function socketConnect(socketToReconnect) {
-//     const [socket, setSocket] = useState(io('http://localhost:3001/'));
-//     if (socketToReconnect) {
-//         await socket.disconnect();
-//         setSocket(io('http://localhost:3001/'));
-//     }
-//     return socket;
-// }
 
 
 const SocketContext = React.createContext(null);
@@ -35,7 +15,14 @@ export function useSocket() {
 // }
 
 export function SocketContextProvider({ children }) {
-    const [socket, setSocket] = useState(io('http://localhost:3001/'));
+    const isSecondRender = useRef(false)
+    const [socket, setSocket] = useState(null);
+
+    useEffect(() => {
+        isSecondRender.current && setSocket(io('http://localhost:3001/'));
+        isSecondRender.current = true
+    }, []);
+
 
 
     // async function reconnect() {

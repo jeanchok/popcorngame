@@ -29,7 +29,7 @@ const Timer = (props) => {
         <>
             {
                 (seconds > 0) ?
-                    <div className='flex justify-center mb-2 mt-5 border border-white font-bold text-white py-1 px-2 text-xl z-20 bg-zinc-800 md:relative absolute top-[54%] left-[2%]'>{seconds}</div>
+                    <div className='flex justify-center mb-2 mt-5 border border-white font-bold text-white py-1 px-2 text-xl z-20 bg-zinc-800 md:relative md:top-0 md:left-0 absolute top-[54%] left-[2%]'>{seconds}</div>
                     : <div className='md:flex justify-center mb-2 mt-5 h-[41px] py-1 px-2 text-xl hidden'></div>
             }
         </>

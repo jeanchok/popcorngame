@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 //import { socket } from "../context / socket";
 import { useSocket } from "../context/socket";
+import { useUser, useUserUpdate } from '.././context/user';
 
 const Chat = () => {
     const [socket] = useSocket();
@@ -10,31 +11,78 @@ const Chat = () => {
     const [round, setRound] = useState(1);
     const [messageReceived, setMessageReceived] = useState([]);
     const playerUsername = sessionStorage.getItem('name');
-    const roomId = sessionStorage.getItem('id');
+    //const roomId = sessionStorage.getItem('id');
     const bottomRef = useRef(null);
+    const user = useUser();
+    const [roomId, setRoomId] = useState(user.gameId);
+
+    useEffect(() => {
+        setRoomId(user.gameId);
+        console.log('useEffectRoomId: ' + user.gameId);
+    }, [user.gameId]);
 
 
     const sendMessage = (e) => {
         e.preventDefault();
+        console.log('sendMessage: ' + roomId);
         socket.emit("message", { message, roomId, playerUsername });
         setMessage('');
     };
 
-    socket.once('closeGuess', (data) => {
+    socket.on('closeGuess', (data) => {
         console.log('closeGuess');
         setMessageReceived([...messageReceived, { playerUsername: "PopCorn", message: "Pas loin !" }]);
     });
 
-    socket.once('correctGuess', async (data) => {
-        console.log('correctGuess');
-        let message = data.message;
-        setMessageReceived([...messageReceived, { playerUsername: "PopCorn", message }]);
-    });
+    // useEffect(() => {
+    //     socket.on('startPicass', async (data) => {
+    //         navigate("/picass", { state: playersList });
+    //         console.log('startCountdownYOOO')
+    //     })
+    //     return () => {
+    //         socket.off("startPicass");
+    //     };
+    // }, []);
 
-    socket.once('lastWord', ({ word }) => {
-        console.log('lastWord');
-        setMessageReceived([{ playerUsername: "PopCorn", message: `L'expression c'était "${word}", si t'as pas trouvé ratio` }]);
-    });
+    // socket.on('correctGuess', async (data) => {
+    //     console.log('correctGuess');
+    //     let message = data.message;
+    //     setMessageReceived([...messageReceived, { playerUsername: "PopCorn", message }]);
+    // });
+
+    useEffect(() => {
+        const correctGuess = async (data) => {
+            console.log('correctGuess');
+            let message = data.message;
+            setMessageReceived([...messageReceived, { playerUsername: "PopCorn", message }]);
+        }
+
+        socket.on('correctGuess', correctGuess);
+
+        return () => {
+            socket.off("correctGuess", correctGuess);
+        };
+    }, [socket]);
+
+
+    useEffect(() => {
+        const lastWord = ({ word }) => {
+            console.log('lastWord');
+            setMessageReceived([{ playerUsername: "PopCorn", message: `L'expression c'était "${word}", si t'as pas trouvé ratio` }]);
+        }
+
+        socket.on('lastWord', lastWord);
+
+        return () => {
+            socket.off("lastWord", lastWord);
+        };
+    }, [socket]);
+
+
+    // socket.on('lastWord', ({ word }) => {
+    //     console.log('lastWord');
+    //     setMessageReceived([{ playerUsername: "PopCorn", message: `L'expression c'était "${word}", si t'as pas trouvé ratio` }]);
+    // });
 
 
     socket.on("message", (data) => {

@@ -13,8 +13,11 @@ import { errorMessage } from 'stream-chat-react/dist/components/AutoCompleteText
 import BackButton from '../Components/BackButton';
 import SoundButton from '.././Components/SoundButton';
 import { useSoundOn } from '.././context/SoundContext';
+import { useUser, useUserUpdate } from '.././context/user';
+
 
 const Room = () => {
+    const user = useUser();
     const [socket] = useSocket();
     const soundOn = useSoundOn();
     const [startSound, setStartSound] = useState(false);
@@ -36,36 +39,137 @@ const Room = () => {
     const navigate = useNavigate();
     const didMount = useRef(false);
 
+    const sessionIdRef = useRef(null)
+    const playerRef = useRef(null)
+    const playersListRef = useRef(null)
+    const userRef = useRef(null);
+
     const [paramId, setParamId] = useState(sessionStorage.getItem('id'));
     let sessionId = sessionStorage.getItem('id');
     let countDownSound = new Audio("/sounds/coutdown-start.mp3")
 
+    useEffect(() => {
+        playerRef.current = players
+    }, [players, startCountdownOverlay]);
+
+    useEffect(() => {
+        userRef.current = user
+    }, [user]);
+
+
+    useEffect(() => {
+        playersListRef.current = playersList
+    }, [playersList]);
+
+    useEffect(() => {
+        sessionIdRef.current = sessionId
+    }, [sessionId]);
 
 
 
-    socket.on('newPrivateRoom', (data) => {
-        setGameLink(`${window.location.protocol}//${window.location.host}/?id=${data.gameID}`);
-        const newPlayerArray = [...players];
-        newPlayerArray.push({ name: data.userName, score: 0, playerId: data.id, playerAvatarIndex: data.playerAvatarIndex });
-        setPlayers(newPlayerArray);
-        console.log(players)
-    });
+
+    // useEffect(() => {
+    //     socket.on('restartExistingRoom', (data) => {
+    //         setGameLink(`${window.location.protocol}//${window.location.host}/?id=${data.gameID}`);
+    //         const newPlayerArray = [...playerRef.current];
+    //         newPlayerArray.push({ name: data.userName, score: 0, playerId: data.id, playerAvatarIndex: data.playerAvatarIndex });
+    //         setPlayers(newPlayerArray);
+    //         console.log('restartExistingRoom', data.gameID);
+    //     });
+    // }, [socket]);
+
+    useEffect(() => {
+
+        console.log('joinExistingRoomBefore', players);
+        socket.on('joinExistingRoom', (data) => {
+            const newPlayerArray = [...playerRef.current];
+            newPlayerArray.push({ name: data.player, score: 0, playerId: data.playerId, playerAvatarIndex: data.playerAvatarIndex });
+            setPlayers(newPlayerArray);
+            console.log('joinExistingRoom', playerRef.current, 'data', data);
+            setGameLink(`${window.location.protocol}//${window.location.host}/?id=${data.id}`)
+            socket.sentMydata = false;
+        });
+    }, [socket]);
+
+    // useEffect(() => {
+    //     const restartToRoom = (data) => {
+    //         if (user.isHosting) {
+    //             console.log('restartToRoom');
+    //             setPlayers([...players, data.userName]);
+    //             console.log(data, players);
+    //         }
+    //     }
+
+    //     socket.on('restartToRoom', restartToRoom);
+
+    //     return () => {
+    //         socket.off("restartToRoom", restartToRoom);
+    //     };
+    // }, [socket]);
+
+    // socket.on('restartToRoom', (data) => {
+    //     setPlayers([...players, data.userName]);
+    //     console.log(data, players);
+    // });
+
+    useEffect(() => {
+
+        const newPrivateRoom = (data) => {
+            setGameLink(`${window.location.protocol}//${window.location.host}/?id=${data.gameID}`);
+            const newPlayerArray = [...playerRef.current];
+            newPlayerArray.push({ name: data.userName, score: 0, playerId: data.id, playerAvatarIndex: data.playerAvatarIndex });
+            setPlayers(newPlayerArray);
+            console.log('newPrivateRoom', data.gameID);
+
+            socket.emit('restartToRoom', { roomID: user.gameId, user: user, newRoomID: data.gameID });
+            socket.sentMydata = false;
+        }
+
+        socket.on('newPrivateRoom', newPrivateRoom);
+
+        return () => {
+            socket.off("newPrivateRoom", newPrivateRoom);
+        };
+        // socket.on('newPrivateRoom', (data) => {
+        //     setGameLink(`${window.location.protocol}//${window.location.host}/?id=${data.gameID}`);
+        //     const newPlayerArray = [...playerRef.current];
+        //     newPlayerArray.push({ name: data.userName, score: 0, playerId: data.id, playerAvatarIndex: data.playerAvatarIndex });
+        //     setPlayers(newPlayerArray);
+        //     console.log('newPrivateRoom');
+        // });
+    }, [socket]);
 
 
+    // socket.on('newPrivateRoom', (data) => {
+    //     setGameLink(`${window.location.protocol}//${window.location.host}/?id=${data.gameID}`);
+    //     const newPlayerArray = [...players];
+    //     newPlayerArray.push({ name: data.userName, score: 0, playerId: data.id, playerAvatarIndex: data.playerAvatarIndex });
+    //     setPlayers(newPlayerArray);
+    //     console.log('newPrivateRoom');
+    //     console.log(players)
+    // });
+    useEffect(() => {
+        console.log('user', user);
+    }, [user]);
 
-    socket.on('joinRoom', (data) => {
-        const newPlayerArray = [...players];
-        newPlayerArray.push({ name: data.player, score: 0, playerId: data.playerId, playerAvatarIndex: data.playerAvatarIndex });
-        setPlayers(newPlayerArray);
-        console.log('joinRoom');
-        setGameLink(`${window.location.protocol}//${window.location.host}/?id=${data.id}`)
-    });
+
+    useEffect(() => {
+        socket.on('joinRoom', (data) => {
+            const newPlayerArray = [...playerRef.current];
+            newPlayerArray.push({ name: data.player, score: 0, playerId: data.playerId, playerAvatarIndex: data.playerAvatarIndex });
+            setPlayers(newPlayerArray);
+            console.log('joinRoom', playerRef.current);
+            setGameLink(`${window.location.protocol}//${window.location.host}/?id=${data.id}`)
+        });
+    }, [socket]);
 
 
-    socket.on('players', (data) => {
-        console.log('players', data)
-        setPlayersList(data)
-    })
+    useEffect(() => {
+        socket.on('players', (data) => {
+            console.log('players', data)
+            setPlayersList(data)
+        })
+    }, [socket]);
 
     socket.on('disconnection', (playerId) => {
         console.log('players', playerId)
@@ -77,12 +181,15 @@ const Room = () => {
         );
     })
 
+
+
     useEffect(() => {
         let params = new URLSearchParams(window.location.search);
         let id = params.get('id');
         setGameLink(`${window.location.protocol}//${window.location.host}/?id=${sessionId}`)
-        if (isHosting === '1') {
-            socket.emit('players', { id: sessionId, players: players });
+        if (isHosting === '1' || user.isHosting === true) {
+            console.log('user.gameId', user.gameId);
+            socket.emit('players', { id: user.gameId, players: players });
             setPlayersList(players);
             console.log('otherplayname', players);
         }
@@ -127,30 +234,21 @@ const Room = () => {
     }, [selectedGame1, selectedGame2, selectedGame3]);
 
     const selectGame1 = () => {
-
-
         setSelectedGame1(!selectedGame1);
         setSelectedGame3(false);
         setSelectedGame2(false);
-
-
     }
 
     const selectGame2 = () => {
-
         setSelectedGame2(!selectedGame2);
         setSelectedGame3(false);
         setSelectedGame1(false);
-
-
     }
 
     const selectGame3 = () => {
-
         setSelectedGame3(!selectedGame3);
         setSelectedGame2(false);
         setSelectedGame1(false);
-
     }
 
 
@@ -165,7 +263,11 @@ const Room = () => {
 
     const launchGame = () => {
         if (selectedGame1) {
-            socket.emit('startCountdown', { roomID: sessionId });
+            console.log('DEMARRER4', socket.sentMydata)
+            if (!socket.sentMydata) {
+                socket.emit('startCountdown', { roomID: sessionId });
+                socket.sentMydata = true;
+            }
         }
         if (selectedGame2 || selectedGame3) {
             setGameErrorMessage(`Le jeux sélectionné n'est pas encore disponible`)
@@ -178,29 +280,68 @@ const Room = () => {
         // }
     }
 
-    socket.once('startCountdown', async () => {
-        console.log('startCountdown')
-        setStartSound(true);
-        await setStartCountdownOverlay(true);
-        setTimeout(() => {
-            startGame();
-        }, 1);
-    });
+    useEffect(() => {
+        const startGame = async () => {
+            if (selectedGame1 && playerRef.current.length > 0) {
+                socket.emit('startPicass', { id: sessionIdRef.current, players: playerRef.current });
+                console.log('startGame', playerRef.current, 'sessionId', sessionId, playersList.length)
+            }
+        }
+
+        const startCountdown = async () => {
+            console.log('startCountdown')
+            setStartSound(true);
+            await setStartCountdownOverlay(true);
+            setTimeout(() => {
+                startGame();
+            }, 1);
+        }
+        socket.on('startCountdown', startCountdown);
+
+        return () => {
+            socket.off("startCountdown", startCountdown);
+        };
+    }, [socket]);
+
+    // socket.on('startCountdown', async () => {
+    //     console.log('startCountdown')
+    //     setStartSound(true);
+    //     await setStartCountdownOverlay(true);
+    //     setTimeout(() => {
+    //         startGame();
+    //     }, 1);
+    // });
 
     if (startSound && soundOn) {
         countDownSound.play();
     }
 
-    socket.on('startPicass', async (data) => {
-        navigate("/picass", { state: playersList });
-    })
+    // socket.on('startPicass', async (data) => {
+    //     console.log('startPicass', data)
+    //     navigate("/picass", { state: playersList });
+    // })
 
+    useEffect(() => {
 
-    const startGame = async () => {
-        if (selectedGame1) {
-            socket.emit('startPicass', { id: sessionId, players: players });
+        const startPicass = async (data) => {
+            navigate("/picass", { state: playersListRef.current });
         }
-    }
+
+        socket.on('startPicass', startPicass)
+        //     // socket.on('startPicass', async (data) => {
+        //     //     console.log('startPicass', data)
+        //     //     navigate("/picass", { state: playersList });
+        //     // })
+        return () => {
+            socket.off("startPicass", startPicass);
+        };
+    }, [socket]);
+
+    // const startGame = async () => {
+    //     if (selectedGame1) {
+    //         socket.emit('startPicass', { id: sessionId, players: players });
+    //     }
+    // }
 
     return (
         <>
@@ -214,7 +355,7 @@ const Room = () => {
                 <section className='max-w-screen-xl bg-center justify-center md:w-[60%] md:h-[50%] w-[90%] h-[60%] mt-9o
                  flex content-center z-10 relative fade-in  backdrop-blur'>
                     <div className='absolute -top-[68px] left-[15%]'>
-                        <BackButton to={"/"} state={false} />
+                        <BackButton to={"/"} state={false} roomID={null} />
                     </div>
                     <div className="w-20 absolute right-[15%] -top-[72px]">
                         <SoundButton />
@@ -224,7 +365,7 @@ const Room = () => {
                         <PlayerList playersList={playersList} />
 
 
-                        <div className='w-2/3 bg-transparent h-full w-full'>
+                        <div className='bg-transparent h-full w-full'>
                             <h2 className='text-white border-white/20 border text-center flex items-center justify-center md:block md:pb-4 md:pt-4 border-red-400 border-l-2 text-xl font-semibold h-[15%]'>CHOISIR LE JEU</h2>
                             <div className='flex flex-col bg-neutral-900 h-full md:h-[85%] w-full border-white/20 border gap-2 rounded-br-lg items-center'>
                                 <div className='md:w-[80%] flex flex-col h-full justify-between'>

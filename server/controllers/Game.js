@@ -6,7 +6,7 @@ const leven = require('../controllers/Leven.js');
 // const { getPlayersCount } = require('./helpers');
 
 global.round = new EventEmitter();
-//global.games = new EventEmitter();
+global.games = {};
 
 
 const GraphemeSplitter = require('grapheme-splitter');
@@ -21,7 +21,7 @@ const {
 //     return Object.keys(games[roomID]).filter((key) => key.length === 20).length;
 // }
 
-let games = {};
+//let games = {};
 
 const splitter = new GraphemeSplitter();
 class Game {
@@ -61,8 +61,8 @@ class Game {
             function rejection(err) { reject(err); }
             const socket = io.of('/').sockets.get(playerID);
             socket.on('chooseWord', async ({ words }) => {
-                games[roomID].currentWord = words;
-                console.log('chooseWord2');
+                console.log('chooseWord2', games[roomID], 'word', words);
+                //games[roomID].currentWord = words;
                 socket.to(roomID).emit('hideWord', {
                     word: splitter.splitGraphemes(words).map((char) => (char !== ' ' ? '_' : char)).join('')
                 });
@@ -82,7 +82,7 @@ class Game {
     }
 
     async startPicass(data) {
-        console.log('startPicass');
+        console.log('startPicass', games);
 
         const { io, socket } = this;
         //const { rounds } = games[socket.roomID];
@@ -101,13 +101,15 @@ class Game {
 
         const players = Array.from(await io.in(roomID).allSockets());
 
+
+        console.log(data.players, 'players')
+
         players.forEach((player, index) => {
             games[roomID][player] = {};
             games[roomID][player].score = 0;
             games[roomID][player].name = data.players[index];
             console.log(player, 'players')
         })
-
 
         for (let j = 0; j < rounds; j++) {
             /* eslint-disable no-await-in-loop */
@@ -117,9 +119,7 @@ class Game {
             }
         }
         io.to(roomID).emit('endGame', { stats: games[roomID] });
-        //await io.in(roomID).socketsLeave(roomID);
         delete games[roomID];
-        console.log(games);
     }
 
 
@@ -172,7 +172,6 @@ class Game {
         console.log('player', player);
         io.to(player).emit('chooseWord', get3Words(roomID));
         try {
-
             io.to(roomID).emit('clearCanvas');
             const word = await this.chosenWord(player, roomID);
             console.log('worddddd', word);
@@ -192,7 +191,7 @@ class Game {
     async onMessage(data) {
         const { io, socket } = this;
         const guess = data.message.toLowerCase().trim();
-        console.log('guess', guess);
+        console.log('guess', guess, games, 'id', data.roomId);
         if (guess === '') return;
         const currentWord = games[data.roomId].currentWord.toLowerCase();
         const distance = leven(guess, currentWord);

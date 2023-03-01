@@ -61,6 +61,7 @@ const io = new Server(server, {
         origin: "http://localhost:3000",
         methods: ["GET", "POST"],
     },
+    //pingTimeout: 30000,
 });
 
 
@@ -75,18 +76,21 @@ const Disconnect = require('../controllers/Disconnect');
 const Game = require('../controllers/Game');
 
 io.on("connection", (socket) => {
-    socket.setMaxListeners(15);
+    //socket.setMaxListeners(15);
     console.log(`User Connected: ${socket.id}`);
 
-    socket.on('newPrivateRoom', (player) => {
-        new Room(io, socket).createPrivateRoom(player)
-    });
 
+    socket.on('newPrivateRoom', (player) => { new Room(io, socket).createPrivateRoom(player) });
     socket.on('startCountdown', async (data) => { await new Room(io, socket).startCountdown(data); });
     socket.on('joinRoom', async (data) => { await new Room(io, socket).joinRoom(data); });
     socket.on('players', async (data) => { await new Room(io, socket).players(data); });
     socket.on('selectGame', async (data) => { await new Room(io, socket).selectGame(data); });
     socket.on('settingsUpdate', (data) => new Room(io, socket).updateSettings(data));
+    socket.on('restartToRoom', (data) => new Room(io, socket).restartToRoom(data));
+    socket.on('restartExistingRoom', (player) => { new Room(io, socket).createPrivateRoom(player) });
+    socket.on('joinExistingRoom', async (data) => { await new Room(io, socket).joinExistingRoom(data); });
+
+
     socket.on('drawing', (data) => new Canvas(io, socket).broadcastDrawing(data));
     socket.on('clearCanvas', (data) => new Canvas(io, socket).clearCanvas(data));
     socket.on('startPicass', async (data) => { await new Game(io, socket).startPicass(data); });
@@ -104,6 +108,8 @@ io.on("connection", (socket) => {
     socket.on('finishDrawing', (data) => new Canvas(io, socket).finishDrawing(data));
     socket.on('changeColor', (data) => new Canvas(io, socket).changeColor(data));
     socket.on('changeLineWidth', (data) => new Canvas(io, socket).changeLineWidth(data));
+
+
 
 });
 
