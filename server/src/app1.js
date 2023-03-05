@@ -53,7 +53,9 @@ const cors = require("cors");
 require('dotenv').config()
 console.log(process.env.API_LINK)
 
-app.use(cors());
+// app.use(cors());
+const index = require("../routes/index");
+app.use(index);
 
 
 const port = process.env.PORT || 3001;
