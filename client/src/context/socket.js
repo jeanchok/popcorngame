@@ -2,9 +2,8 @@ import React, { useContext, useState, useEffect, useRef } from 'react'
 import io from "socket.io-client";
 
 
-
 const SocketContext = React.createContext(null);
-const SocketReconnectContext = React.createContext(null);
+// const SocketReconnectContext = React.createContext(null);
 
 export function useSocket() {
     return useContext(SocketContext)
@@ -17,9 +16,10 @@ export function useSocket() {
 export function SocketContextProvider({ children }) {
     const isSecondRender = useRef(false)
     const [socket, setSocket] = useState(null);
+    // const API_URL = import.meta.env.API_URL;process.env.API_KEY
 
     useEffect(() => {
-        isSecondRender.current && setSocket(io('http://localhost:3001/'));
+        isSecondRender.current && setSocket(io(process.env.REACT_APP_API_URL));
         isSecondRender.current = true
     }, []);
 

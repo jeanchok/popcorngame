@@ -355,7 +355,7 @@ const Room = () => {
                 <section className='max-w-screen-xl bg-center justify-center md:w-[60%] md:h-[50%] w-[90%] h-[60%] mt-9o
                  flex content-center z-10 relative fade-in  backdrop-blur'>
                     <div className='absolute -top-[68px] left-[15%]'>
-                        <BackButton to={"/"} state={false} roomID={null} />
+                        <BackButton to={"/"} roomID={null} />
                     </div>
                     <div className="w-20 absolute right-[15%] -top-[72px]">
                         <SoundButton />
@@ -457,7 +457,7 @@ const Room = () => {
                                         {isHosting === '1' ?
                                             <button className=' bg-white hover:bg-red-500 text-red-500 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent mt-4 w-1/3 transition flex justify-center' type='submit' value='Démarrer' onClick={launchGame}>DEMARRER
                                                 {
-                                                    (gameErrorMessage != "") ?
+                                                    (gameErrorMessage !== "") ?
                                                         <div className='text-white p-1 absolute -bottom-8 left-[25%]'>
                                                             <p>{gameErrorMessage}</p>
                                                         </div>

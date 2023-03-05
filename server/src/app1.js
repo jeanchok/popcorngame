@@ -50,6 +50,9 @@ const http = require("http");
 const { Server } = require("socket.io");
 const cors = require("cors");
 
+require('dotenv').config()
+console.log(process.env.API_LINK)
+
 app.use(cors());
 
 
@@ -58,7 +61,7 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
     cors: {
-        origin: "http://localhost:3000",
+        origin: process.env.API_LINK,
         methods: ["GET", "POST"],
     },
     //pingTimeout: 30000,
