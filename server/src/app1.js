@@ -64,11 +64,12 @@ const io = new Server(server, {
         origin: process.env.API_LINK,
         methods: ["GET", "POST"],
     },
+
     //pingTimeout: 30000,
 });
 
 
-
+console.log(process.env.API_LINK)
 // import Room from '../controllers/Rooms.js';
 // import Canvas from '../controllers/Canvas.js';
 // import Game from '../controllers/Game.js';

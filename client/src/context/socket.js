@@ -20,7 +20,8 @@ export function SocketContextProvider({ children }) {
 
     useEffect(() => {
         isSecondRender.current && setSocket(io(process.env.REACT_APP_API_URL));
-        isSecondRender.current = true
+        isSecondRender.current = true;
+        console.log(process.env.REACT_APP_API_URL)
     }, []);
 
 
