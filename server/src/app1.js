@@ -57,7 +57,6 @@ app.use(cors());
 const index = require("../routes/index");
 app.use(index);
 
-
 const port = process.env.PORT || 3001;
 const server = http.createServer(app);
 
@@ -130,4 +129,4 @@ io.on("connection", (socket) => {
 
 });
 
-server.listen(port, () => console.log(`Listening on port ${port}`));
+//server.listen(port, () => console.log(`Listening on port ${port}`));
