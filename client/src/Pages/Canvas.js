@@ -109,15 +109,15 @@ export function Canvas() {
                         :
 
 
-                        <section className='max-w-screen-xl bg-center justify-center md:w-auto w-full md:h-[60%] h-[100%] mt-9o
+                        <section className='bg-center justify-center md:w-[80%] w-full md:h-[60%] h-[100%] mt-9o
                  flex content-center z-10 relative fade-in  backdrop-blur'>
                             <div className='absolute -top-[68px] left-[2%] md:block hidden'>
-                                <BackButton to={"/"} state={false} roomID={null} />
+                                <BackButton to={"/"} roomID={null} />
                             </div>
                             <div className="w-20 absolute right-[15%] -top-[72px] mb:block hidden">
                                 <SoundButton />
                             </div>
-                            <div className=' min-h-[70%] border-white/20 border bg-slate-50 bg-opacity-10 flex rounded-md backdrop-blur-sm md:w-auto w-full flex-col md:flex-row'>
+                            <div className=' min-h-[70%] border-white/20 border bg-slate-50 bg-opacity-10 flex rounded-md backdrop-blur-sm md:w-full w-full flex-col md:flex-row'>
 
                                 <PlayerList playersList={playersList} />
 

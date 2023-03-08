@@ -42,9 +42,14 @@ const Canva = ({ playersList }) => {
     useEffect(() => {
         // --------------- getContext() method returns a drawing context on the canvas-----
 
+
         const canvas = canvasRef.current;
-        canvas.width = canvas.clientWidth * 2;
-        canvas.height = canvas.clientHeight * 2;
+        // canvas.width = canvas.clientWidth * 2;
+        // canvas.height = canvas.clientHeight * 2;
+
+        canvas.width = canvas.getBoundingClientRect().width * 2;
+        canvas.height = canvas.getBoundingClientRect().height * 2;
+
         canvas.style.width = canvas.width;
         canvas.style.height = canvas.height;
 
@@ -170,12 +175,10 @@ const Canva = ({ playersList }) => {
         // const onResize = () => {
         //     canvas.width = window.innerWidth;
         //     canvas.height = window.innerHeight;
-        //     console.log(canvas.width, canvas.height, 'onResize');
         // };
 
         // window.addEventListener('resize', onResize, false);
         // onResize();
-
         // ----------------------- socket.io connection ----------------------------
         const onDrawingEvent = (data) => {
             const w = canvas.width;
@@ -327,7 +330,7 @@ const Canva = ({ playersList }) => {
     }
 
     return (
-        <div className='w-2/3 w-full md:h-auto h-full flex flex-col'>
+        <div className='w-full h-full flex flex-col'>
             <h2 className='text-white  font-semibold text-center pb-4 pt-4 border-red-400 border-l-2 border-r-2 text-xl h-auto md:h-[12%]'>{
                 isChoosingWord ? 'CHOISISSEZ UNE EXPRESSION !'
                     :
