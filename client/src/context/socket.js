@@ -24,7 +24,7 @@ export function SocketContextProvider({ children }) {
         }));
         isSecondRender.current = true;
         console.log(process.env.REACT_APP_API_URL, socket)
-    }, [process.env.REACT_APP_API_URL]);
+    }, []);
 
 
 
