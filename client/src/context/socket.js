@@ -19,8 +19,7 @@ export function SocketContextProvider({ children }) {
     // const API_URL = import.meta.env.API_URL;process.env.API_KEY
 
     useEffect(() => {
-        //isSecondRender.current && 
-        setSocket(io('https://popcornback.jeanchoquet.fr/', {
+        !isSecondRender.current && setSocket(io(process.env.REACT_APP_API_URL, {
             transports: ['websocket'],
         }));
         isSecondRender.current = true;
