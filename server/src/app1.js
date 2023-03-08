@@ -51,7 +51,7 @@ const { Server } = require("socket.io");
 const cors = require("cors");
 
 require('dotenv').config()
-console.log(process.env.API_LINK)
+
 
 app.use(cors());
 const index = require("../routes/index");
@@ -69,10 +69,12 @@ const io = new Server(server, {
     },
 
     pingTimeout: 30000,
+
 });
+console.log(process.env.API_LINK, io)
 
 
-console.log(process.env.API_LINK)
+
 // import Room from '../controllers/Rooms.js';
 // import Canvas from '../controllers/Canvas.js';
 // import Game from '../controllers/Game.js';
