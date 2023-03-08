@@ -15,16 +15,16 @@ export function useSocket() {
 
 export function SocketContextProvider({ children }) {
     const isSecondRender = useRef(false)
-    const [socket, setSocket] = useState(process.env.REACT_APP_API_URL);
+    const [socket, setSocket] = useState(null);
     // const API_URL = import.meta.env.API_URL;process.env.API_KEY
 
-    // useEffect(() => {
-    //     isSecondRender.current && setSocket(io(process.env.REACT_APP_API_URL, {
-    //         transports: ['websocket'],
-    //     }));
-    //     isSecondRender.current = true;
-    //     console.log(process.env.REACT_APP_API_URL, socket)
-    // }, []);
+    useEffect(() => {
+        isSecondRender.current && setSocket(io(process.env.REACT_APP_API_URL, {
+            transports: ['websocket'],
+        }));
+        isSecondRender.current = true;
+        console.log(process.env.REACT_APP_API_URL, socket)
+    }, [process.env.REACT_APP_API_URL]);
 
 
 
