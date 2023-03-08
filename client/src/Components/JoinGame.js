@@ -6,8 +6,8 @@ import { useUser, useUserUpdate } from '.././context/user';
 import io from "socket.io-client";
 
 const JoinGame = () => {
-    const [socket] = useSocket();
-    //let socket = io('https://popcornback.jeanchoquet.fr/');
+    //const [socket] = useSocket();
+    let socket = io('https://popcornback.jeanchoquet.fr/');
     const [playerUsername, setPlayerUsername] = useState("");
     const [playerAvatarIndex, setPlayerAvatarIndex] = useState(0);
     const [response, setResponse] = useState("");
