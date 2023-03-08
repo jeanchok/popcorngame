@@ -62,8 +62,9 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
     cors: {
-        origin: process.env.API_LINK,
+        //origin: process.env.API_LINK,
         //origin: 'http://http://localhost:3000/',
+        origin: "*",
         methods: ["GET", "POST"],
     },
 

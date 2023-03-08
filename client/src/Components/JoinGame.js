@@ -3,9 +3,11 @@ import { useSocket } from "../context/socket";
 import { useNavigate } from "react-router-dom";
 import { avatars } from "../constant/const.js"
 import { useUser, useUserUpdate } from '.././context/user';
+import io from "socket.io-client";
 
 const JoinGame = () => {
-    const [socket] = useSocket();
+    //const [socket] = useSocket();
+    let socket = io('http://popcornback.jeanchoquet.fr/');
     const [playerUsername, setPlayerUsername] = useState("");
     const [playerAvatarIndex, setPlayerAvatarIndex] = useState(0);
     const [response, setResponse] = useState("");
@@ -13,6 +15,8 @@ const JoinGame = () => {
     const navigate = useNavigate();
     const user = useUser();
     const userUpdate = useUserUpdate();
+
+    console.log('socket', socket)
 
     useEffect(() => {
         let params = new URLSearchParams(window.location.search);
