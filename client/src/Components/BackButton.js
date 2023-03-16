@@ -43,17 +43,17 @@ const BackButton = ({ to, roomID }) => {
                         <div className='bg-white flex p-2 mb-4 rounded group hover:bg-black hover:border border  transition'>
                             <img src="/img/angle-de-la-fleche-pointant-vers-la-gauche.png" className='w-8 pr-2 group-hover:hidden transition' alt="flêche" />
                             <img src="/img/angle-de-la-fleche-pointant-vers-la-gauche-white.png" className='w-8 pr-2 hidden transition group-hover:block' alt="flêche" />
-                            <nav className='text-xl pr-2 font-bold group-hover:text-white transition'>
+                            <nav className='text-black text-xl pr-2 font-bold group-hover:text-white transition'>
                                 REJOUER
                             </nav>
                         </div>
                     </button>
                     :
                     <button onClick={() => { backTo(to) }}>
-                        <div className='bg-white flex p-2 mb-4 rounded group hover:bg-black hover:border border  transition'>
+                        <div className='bg-white flex p-2 mb-4 rounded  group hover:bg-black hover:border border  transition'>
                             <img src="/img/angle-de-la-fleche-pointant-vers-la-gauche.png" className='w-8 pr-2 group-hover:hidden transition' alt="flêche" />
                             <img src="/img/angle-de-la-fleche-pointant-vers-la-gauche-white.png" className='w-8 pr-2 hidden transition group-hover:block' alt="flêche" />
-                            <nav className='text-xl pr-2 font-bold group-hover:text-white transition'>
+                            <nav className='text-xl text-black pr-2 font-bold group-hover:text-white transition'>
                                 ACCUEIL
                             </nav>
                         </div>

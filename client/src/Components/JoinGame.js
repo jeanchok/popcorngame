@@ -16,7 +16,6 @@ const JoinGame = () => {
     const user = useUser();
     const userUpdate = useUserUpdate();
 
-    console.log('socket', socket)
 
     useEffect(() => {
         let params = new URLSearchParams(window.location.search);

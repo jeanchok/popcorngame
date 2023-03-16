@@ -46,7 +46,6 @@ class Game {
             // if (Object.keys(games[roomID]).filter((key) => key.length === 20).length === 1) {
             //     io.to(roomID).emit('endGame', { stats: games[roomID] });
             // }
-            console.log('fdesqdsfdsfdfs', (Array.from(await io.in(roomID).allSockets()).length === 1));
             if (Array.from(await io.in(roomID).allSockets()).length === 0) delete games[roomID];
             if (Array.from(await io.in(roomID).allSockets()).length === 1) {
                 io.to(roomID).emit('endGame', { stats: games[roomID] });
@@ -64,7 +63,7 @@ class Game {
                 console.log('chooseWord2', games[roomID], 'word', words);
                 //games[roomID].currentWord = words;
                 socket.to(roomID).emit('hideWord', {
-                    word: splitter.splitGraphemes(words).map((char) => (char !== ' ' ? '_' : char)).join('')
+                    word: splitter.splitGraphemes(words).map((char) => (char !== ' ' ? '_' : char)).join('\xa0')
                 });
                 socket.removeListener('disconnect', rejection);
                 resolve(words);
@@ -90,7 +89,7 @@ class Game {
 
         games[roomID] = {
             rounds: 2,
-            time: 40 * 1000,
+            time: 50 * 1000,
         };
         // games[roomID][socket.id] = {};
         // games[roomID][socket.id].score = 0;
@@ -153,7 +152,6 @@ class Game {
         const player = players[i];
         const prevPlayer = players[(i - 1 + players.length) % players.length];
         const drawer = io.of('/').sockets.get(player);
-        console.log('PLAYEEEERRRRR', player);
         if (!drawer || !roomID) return;
         this.resetGuessedFlag(players);
         // let games = {
@@ -176,8 +174,8 @@ class Game {
             const word = await this.chosenWord(player, roomID);
             console.log('worddddd', word);
             games[roomID].currentWord = word;
-
             drawer.to(roomID).emit('hints', getHints(word, roomID, games));
+            console.log('hints', getHints(word, roomID, games));
             games[roomID].startTime = Date.now() / 1000;
             console.log('startTimer', { time });
             io.to(roomID).emit('startTimer', { time });
@@ -195,7 +193,7 @@ class Game {
         if (guess === '') return;
         const currentWord = games[data.roomId].currentWord.toLowerCase();
         const distance = leven(guess, currentWord);
-        if (distance === 0 && currentWord !== '') {
+        if (distance < 4 && currentWord !== '') {
             //socket.emit('message', data);
             data.correctGuess = true;
             socket.emit('message', { data, id: socket.id });
@@ -229,7 +227,8 @@ class Game {
                 }
             }
             socket.hasGuessed = true;
-        } else if (distance < 3 && currentWord !== '') {
+        }
+        else if (distance < 5 && currentWord !== '') {
             io.in(data.roomId).emit('message', { ...data, name: data.playerUsername });
             if (games[data.roomId].drawer !== socket.id && !socket.hasGuessed) socket.emit('closeGuess', { message: 'That was very close!' });
         } else {

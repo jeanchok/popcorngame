@@ -26,6 +26,7 @@ export function Canvas() {
     const [endGame, setEndGame] = useState(false);
     const [score, setScore] = useState();
     const [winnerName, setWinnerName] = useState("");
+    const [givenHint, setGivenHint] = useState("");
     const soundOn = useSoundOn();
     const [startSoundRoundStart, setStartSoundRoundStart] = useState(false);
     const [startSoundRoundEnd, setStartSoundRoundEnd] = useState(false);
@@ -34,6 +35,22 @@ export function Canvas() {
     let endGameSound = new Audio("/sounds/finish.mp3")
     const user = useUser();
     const [sessionId, setSessionId] = useState(user.gameId);
+
+    const [sectionWidth, setSectionWidth] = useState('');
+    const [sectionHeight, setSectionHeight] = useState('');
+
+    // Timer const
+    const [seconds, setSeconds] = useState(null);
+    const [switchColorTimer, setSwitchColorTimer] = useState(false);
+    let secLeft = new Audio("/sounds/5secLeft.mp3")
+    const secondsRef = useRef(null);
+
+    const [hints, setHints] = useState([]);
+
+
+    useEffect(() => {
+        secondsRef.current = seconds;
+    }, [seconds]);
 
     useEffect(() => {
         setSessionId(user.gameId);
@@ -45,53 +62,87 @@ export function Canvas() {
         endGameSound.play();
     }
 
-    socket.on('startTimer', ({ time }) => {
-        setEndTime(false);
-        setTime(time);
-        setStartSoundRoundEnd(true);
-    })
+    useEffect(() => {
+        socket.on('startTimer', ({ time }) => {
+            setEndTime(false);
+            setTime(time);
 
-    socket.on('disconnection', (playerId) => {
-        console.log('players', playerId)
-        setPlayersList((current) =>
-            current.filter((player) => player.playerId !== playerId)
-        );
-    })
+            setStartSoundRoundEnd(true);
+        })
 
-    socket.on('updateScore', (data) => {
-        let drawer = playersList.find(player => player.playerId === data.drawerID.name.playerId);
-        drawer.score = data.drawerID.score;
-        let player = playersList.find(player => player.playerId === data.playerID);
-        player.score = data.score;
-        setPlayersList([...playersList]);
-    })
+        socket.on('disconnection', (playerId) => {
+            console.log('players', playerId)
+            setPlayersList((current) =>
+                current.filter((player) => player.playerId !== playerId)
+            );
+        })
 
-    socket.on('endGame', async ({ stats }) => {
-        let highestScore = -1;
-        let highestScoringUserId = "";
-        // let players = Object.keys(stats).filter((val) => val.length === 20);
-        // players.forEach((player) => {
-        //     if (player.score > highestScore) {
-        //         highestScore = player.score;
-        //         highestScoringUserId = player.name.playerId;
-        //     }
-        // })
-        for (let userId in stats) {
-            if (userId !== "rounds" && userId !== "time" && userId !== "totalGuesses" && userId !== "currentWord" && userId !== "drawer" && userId !== "startTime") {
-                if (stats[userId].score > highestScore) {
-                    highestScore = stats[userId].score;
-                    highestScoringUserId = userId;
+        socket.on('updateScore', (data) => {
+            let drawer = playersList.find(player => player.playerId === data.drawerID.name.playerId);
+            drawer.score = data.drawerID.score;
+            let player = playersList.find(player => player.playerId === data.playerID);
+            player.score = data.score;
+            setPlayersList([...playersList]);
+        })
+
+        socket.on('endGame', async ({ stats }) => {
+            let highestScore = -1;
+            let highestScoringUserId = "";
+            // let players = Object.keys(stats).filter((val) => val.length === 20);
+            // players.forEach((player) => {
+            //     if (player.score > highestScore) {
+            //         highestScore = player.score;
+            //         highestScoringUserId = player.name.playerId;
+            //     }
+            // })
+            for (let userId in stats) {
+                if (userId !== "rounds" && userId !== "time" && userId !== "totalGuesses" && userId !== "currentWord" && userId !== "drawer" && userId !== "startTime") {
+                    if (stats[userId].score > highestScore) {
+                        highestScore = stats[userId].score;
+                        highestScoringUserId = userId;
+                    }
                 }
             }
-        }
-        let winner = playersList.find(player => player.playerId === highestScoringUserId);
-        setTime(0);
-        await setWinnerName(winner.name);
-        setEndGame(true);
-        await setStartSoundRoundEnd(false);
-        setStartSoundEndGame(true);
-    })
+            let winner = playersList.find(player => player.playerId === highestScoringUserId);
+            setTime(0);
+            await setWinnerName(winner.name);
+            setEndGame(true);
+            await setStartSoundRoundEnd(false);
+            setStartSoundEndGame(true);
+        })
 
+    }, [socket]);
+
+    useEffect(() => {
+        if (time > 0) {
+            setSeconds(time / 1000);
+        }
+        console.log('time', time)
+    }, [time]);
+
+
+    const updateGivenHint = (hint) => {
+        setGivenHint(hint.hint);
+        console.log(hints, 'Hints');
+    }
+
+    const updateSize = () => {
+        console.log('width', window.innerWidth * 0.8, 'height', window.innerWidth * 0.8 * 0.64)
+        if (window.innerWidth > 768) {
+            setSectionWidth(window.innerWidth * 0.8 + `px`);
+            setSectionHeight(window.innerWidth * 0.8 + `px`);
+        } else {
+            setSectionWidth(`100%`);
+            setSectionHeight(`100%`);
+        }
+
+    }
+
+
+    useEffect(() => {
+        updateSize();
+        window.addEventListener("resize", updateSize);
+    }, []);
     return (
 
         <>
@@ -102,26 +153,35 @@ export function Canvas() {
                 </div>
                 <img className='object-cover absolute h-screen w-screen bg-object bg-cover -z-10 top-0' src=".\img\fondpop.png" alt="popcorn rouge fond" />
                 <div className='bg-black/25 w-screen h-2/4 -z-10 absolute top-0'></div>
-                {time > 0 ? <Timer time={time} /> : <div className=' justify-center mb-2 mt-5 h-[41px] py-1 px-2 text-xl md:flex hidden'></div>}
+                {/* {
+                    time > 0 ?
+                        <Timer time={time} updateGivenHint={updateGivenHint} /> : <div className=' justify-center mb-2 mt-5 h-[41px] py-1 px-2 text-xl md:flex hidden'></div>
+                } */}
+
+                <Timer updateGivenHint={updateGivenHint} />
+
+
                 {
                     endGame ?
                         <ResultsGameOverlay winnerName={winnerName} playersList={playersList} roomID={sessionId} />
                         :
 
 
-                        <section className='bg-center justify-center md:w-[80%] w-full md:h-[60%] h-[100%] mt-9o
-                 flex content-center z-10 relative fade-in  backdrop-blur'>
+                        <section className={`w-full h-full md:w-[80%] md:h-[60%] bg-center justify-center mt-9o
+                 flex content-center z-10 relative fade-in  backdrop-blur`}
+                        //  style={{ width: `${sectionWidth}`, height: `${sectionHeight}` }}
+                        >
                             <div className='absolute -top-[68px] left-[2%] md:block hidden'>
                                 <BackButton to={"/"} roomID={null} />
                             </div>
-                            <div className="w-20 absolute right-[15%] -top-[72px] mb:block hidden">
+                            <div className="w-20 absolute right-[15%] -top-[72px] md:block hidden">
                                 <SoundButton />
                             </div>
                             <div className=' min-h-[70%] border-white/20 border bg-slate-50 bg-opacity-10 flex rounded-md backdrop-blur-sm md:w-full w-full flex-col md:flex-row'>
 
                                 <PlayerList playersList={playersList} />
 
-                                <Canva playersList={playersList} />
+                                <Canva playersList={playersList} givenHint={givenHint} />
                                 <Chat />
                             </div>
                         </section>

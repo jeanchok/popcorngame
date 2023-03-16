@@ -19,7 +19,7 @@ function getScore(startTime, roundtime) {
 
 function populateDisplayTime(hints, roomID, games) {
     const roundTime = games[roomID].time;
-    const startTime = Math.floor(roundTime / 2);
+    const startTime = Math.floor(roundTime - 1);
     const hintInterval = Math.floor(startTime / hints.length);
     return hints.map((hint, i) => ({
         hint,
@@ -40,7 +40,7 @@ function getHints(word, roomID, games) {
         prevHint = [...prevHint.slice(0, pos), graphemes[pos], ...prevHint.slice(pos + 1)];
         hints.push(prevHint);
     }
-    hints = hints.map((hint) => hint.join(''));
+    hints = hints.map((hint) => hint.join(' '));
     return populateDisplayTime(hints, roomID, games);
 }
 

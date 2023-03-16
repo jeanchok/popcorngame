@@ -4,7 +4,7 @@ import { useSocket } from "../context/socket";
 import { colors1, colors2 } from "../constant/const";
 import { useUser, useUserUpdate } from '.././context/user';
 
-const Canva = ({ playersList }) => {
+const Canva = ({ playersList, givenHint }) => {
     const user = useUser();
     const [socket] = useSocket();
     const [isDrawing, setIsDrawing] = useState(false);
@@ -14,7 +14,8 @@ const Canva = ({ playersList }) => {
     const [fillingMode, setFillingMode] = useState(false);
     const [currentColor, setCurrentColor] = useState('black');
     const [currentLineWidth, setCurrentLineWidth] = useState(25);
-
+    // const [hints, setHints] = useState([]);
+    const [givenHintUpdated, setGivenHintsUpdated] = useState();
     const [wordsChoice, setWordsChoice] = useState([]);
     const [wordToGuess, setWordToGuess] = useState('');
     const [drawer, setDrawer] = useState('');
@@ -36,8 +37,12 @@ const Canva = ({ playersList }) => {
         console.log('useEffectRoomId: ' + RoomId);
     }, [user.gameId]);
 
+    useEffect(() => {
 
+        setWordToGuess(givenHint)
+    }, [givenHint]);
 
+    console.log(givenHint, 'givenHintChild')
 
     useEffect(() => {
         // --------------- getContext() method returns a drawing context on the canvas-----
@@ -58,7 +63,7 @@ const Canva = ({ playersList }) => {
         context.scale(2, 2);
         context.lineCap = "round";
         context.strokeStyle = 'black';
-        context.lineWidth = 15;
+        context.lineWidth = 5;
         contextRef.current = context;
         setCurrentColor('black');
 
@@ -173,8 +178,11 @@ const Canva = ({ playersList }) => {
         // -------------- make the canvas fill its parent component -----------------
 
         // const onResize = () => {
-        //     canvas.width = window.innerWidth;
-        //     canvas.height = window.innerHeight;
+        //     canvas.width = canvas.getBoundingClientRect().width * 2;
+        //     canvas.height = canvas.getBoundingClientRect().height * 2;
+
+        //     canvas.style.width = canvas.width;
+        //     canvas.style.height = canvas.height;
         // };
 
         // window.addEventListener('resize', onResize, false);
@@ -223,25 +231,12 @@ const Canva = ({ playersList }) => {
             // context.fillRect(0, 0, canvas.width, canvas.height);
         })
 
-        // socket.on('chooseWord', async ([word1, word2, word3]) => {
-        //     setIsThedrawer(true);
-        //     await setDrawerisChoosing(false);
-        //     await setIsChoosingWord(true);
-        //     setWordsChoice([word1, word2, word3]);
-        //     console.log('chooseWordOn')
-        // });
-
         socket.on('choosing', async ({ name }) => {
             setIsThedrawer(false);
             let drawer = playersList.find(player => player.playerId === name);
             await setDrawerisChoosing(true);
             setDrawer(drawer.name);
         });
-
-        // socket.on('startTimer', () => {
-        //     setDrawerisChoosing(false);
-        // })
-
 
     }, [socket]);
 
@@ -320,12 +315,12 @@ const Canva = ({ playersList }) => {
         const context = canvas.getContext("2d")
         context.lineWidth = size;
         //contextRef.current = context;
-
         socket.emit('changeLineWidth', { RoomId: RoomId, size });
-
     };
 
+
     const capitalizeFirstLetter = (string) => {
+        console.log(string, 'capitalizeFirstLetter', string.charAt(0).toUpperCase() + string.slice(1))
         return string.charAt(0).toUpperCase() + string.slice(1);
     }
 
@@ -336,7 +331,7 @@ const Canva = ({ playersList }) => {
                     :
                     drawerisChoosing ? `L'EXPRESSION EST EN TRAIN DE CHARGER...`
                         :
-                        wordToGuess ? capitalizeFirstLetter(wordToGuess)
+                        wordToGuess ? <pre> {capitalizeFirstLetter(wordToGuess)}</pre>
                             :
                             null
             }</h2>
@@ -347,7 +342,7 @@ const Canva = ({ playersList }) => {
                             <div className="flex flex-col  align-center justify-center  gap-y-4 p-4">
                                 {wordsChoice.map((words, index) =>
                                     <div className="flex items-center" key={index}>
-                                        <button onClick={(e) => { chooseWord(words) }} className="h-[41px] whitespace-nowrap hover:bg-red-500 hover:border-transparent transition text-white border-white border-1 font-bold py-2 px-4 border border-red-700">
+                                        <button onClick={(e) => { chooseWord(words) }} className="h-[41px] whitespace-nowrap hover:bg-red-500 hover:border-transparent transition text-white border-1 font-bold py-2 px-4 border border-red-700">
                                             Celle-la !
                                         </button>
                                         <p className="ml-2 py-2 text-white px-4 font-bold">{capitalizeFirstLetter(words)}</p>
@@ -374,7 +369,7 @@ const Canva = ({ playersList }) => {
                             null
                     }
                     {
-                        isThedrawer ?
+                        isThedrawer && !isChoosingWord ?
                             <canvas className="h-full w-full bg-white"
                                 ref={canvasRef}
                             />

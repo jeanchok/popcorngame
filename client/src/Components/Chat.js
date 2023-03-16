@@ -68,7 +68,7 @@ const Chat = () => {
     useEffect(() => {
         const lastWord = ({ word }) => {
             console.log('lastWord');
-            setMessageReceived([{ playerUsername: "PopCorn", message: `L'expression c'était "${word}", si t'as pas trouvé ratio` }]);
+            setMessageReceived([...messageReceived, { playerUsername: "PopCorn", message: `L'expression c'était "${word}", si t'as pas trouvé ratio` }]);
         }
 
         socket.on('lastWord', lastWord);
@@ -92,12 +92,12 @@ const Chat = () => {
     });
 
     socket.on('startTimer', () => {
-        setMessageReceived([{ playerUsername: "PopCorn", message: `Nouveau tour du round ${round} !!` }])
+        setMessageReceived([...messageReceived, { playerUsername: "PopCorn", message: `Nouveau tour du round ${round} !!` }])
     })
 
     socket.on('round', ({ round }) => {
         setRound(round);
-        setMessageReceived([{ playerUsername: "PopCorn", message: `Début du round ${round} !` }])
+        setMessageReceived([...messageReceived, { playerUsername: "PopCorn", message: `Début du round ${round} !` }])
     })
 
     useEffect(() => {
@@ -112,18 +112,18 @@ const Chat = () => {
                 <ul className='overflow-y-auto scrollbar grow'>
 
 
-                    {messageReceived.map((messageReceived) =>
+                    {messageReceived.map((messageReceived, index) =>
                         (messageReceived.playerUsername === playerUsername) ?
-                            <li className='flex justify-end mr-2'>
+                            <li className='flex justify-end mr-2' key={index}>
                                 <p className='w-5/6 mb-1 px-4 py-2 rounded-lg inline-block rounded-br-none bg-red-400 text-white text-right break-words	'><strong>{messageReceived.playerUsername} : </strong>{messageReceived.message}</p>
                             </li>
                             :
                             (messageReceived.playerUsername === "PopCorn") ?
-                                <li className='flex justify-end mr-2'>
+                                <li className='flex justify-end mr-2' key={index}>
                                     <p className='w-5/6 mb-1 px-4 py-2 rounded-lg inline-block rounded-br-none border-solid border-2 text-white text-right break-words	'><strong>{messageReceived.playerUsername} : </strong>{messageReceived.message}</p>
                                 </li>
                                 :
-                                <li className='flex justify-start  mr-2'>
+                                <li className='flex justify-start  mr-2' key={index}>
                                     <p className='w-5/6 mb-1 px-4 py-2 rounded-lg inline-block bg-gray-300 text-gray-600 break-words	'><strong>{messageReceived.playerUsername} : </strong>{messageReceived.message}</p>
                                 </li>
                     )}
