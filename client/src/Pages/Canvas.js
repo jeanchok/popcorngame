@@ -15,7 +15,7 @@ import BackButton from "../Components/BackButton";
 import SoundButton from '.././Components/SoundButton';
 import { useSoundOn } from '.././context/SoundContext';
 import { useUser, useUserUpdate } from '.././context/user';
-import normalizeUnicode from "tar/lib/normalize-unicode";
+
 
 export function Canvas() {
     const [socket] = useSocket();
