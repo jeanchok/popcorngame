@@ -15,6 +15,7 @@ import BackButton from "../Components/BackButton";
 import SoundButton from '.././Components/SoundButton';
 import { useSoundOn } from '.././context/SoundContext';
 import { useUser, useUserUpdate } from '.././context/user';
+import normalizeUnicode from "tar/lib/normalize-unicode";
 
 export function Canvas() {
     const [socket] = useSocket();
@@ -35,6 +36,7 @@ export function Canvas() {
     let endGameSound = new Audio("/sounds/finish.mp3")
     const user = useUser();
     const [sessionId, setSessionId] = useState(user.gameId);
+    const [scaleRatio, setScaleRatio] = useState(null);
 
     const [sectionWidth, setSectionWidth] = useState('');
     const [sectionHeight, setSectionHeight] = useState('');
@@ -126,23 +128,25 @@ export function Canvas() {
         console.log(hints, 'Hints');
     }
 
-    const updateSize = () => {
-        console.log('width', window.innerWidth * 0.8, 'height', window.innerWidth * 0.8 * 0.64)
-        if (window.innerWidth > 768) {
-            setSectionWidth(window.innerWidth * 0.8 + `px`);
-            setSectionHeight(window.innerWidth * 0.8 + `px`);
-        } else {
-            setSectionWidth(`100%`);
-            setSectionHeight(`100%`);
-        }
+    // const updateSize = () => {
+    //     if (window.innerWidth > 1024) {
+    //         let ratio = window.innerWidth * 0.8 / 1500
+    //         if (ratio > 1.11) {
+    //             setScaleRatio(1.11)
+    //         } else {
+    //             setScaleRatio(window.innerWidth * 0.8 / 1500)
+    //         }
 
-    }
+    //     } else {
+    //         setScaleRatio(null)
+    //     }
+    // }
 
+    // useEffect(() => {
+    //     updateSize();
+    //     window.addEventListener("resize", updateSize);
+    // }, []);
 
-    useEffect(() => {
-        updateSize();
-        window.addEventListener("resize", updateSize);
-    }, []);
     return (
 
         <>
@@ -165,12 +169,11 @@ export function Canvas() {
                     endGame ?
                         <ResultsGameOverlay winnerName={winnerName} playersList={playersList} roomID={sessionId} />
                         :
-
-
                         <section className={`w-full h-full md:w-[80%] md:h-[60%] bg-center justify-center mt-9o
                  flex content-center z-10 relative fade-in  backdrop-blur`}
-                        //  style={{ width: `${sectionWidth}`, height: `${sectionHeight}` }}
+                            style={(window.innerWidth > 768) ? { transform: `scale(${scaleRatio})` } : null}
                         >
+
                             <div className='absolute -top-[68px] left-[2%] md:block hidden'>
                                 <BackButton to={"/"} roomID={null} />
                             </div>

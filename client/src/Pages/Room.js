@@ -295,7 +295,7 @@ const Room = () => {
             await setStartCountdownOverlay(true);
             setTimeout(() => {
                 startGame();
-            }, 1);
+            }, 3000);
         }
         socket.on('startCountdown', startCountdown);
 
@@ -448,7 +448,7 @@ const Room = () => {
                                     </div>
                                     <div className='flex w-full md:m-auto justify-around md:mt-10 md:mb-10 relative md:p-0 pb-5'>
 
-                                        <button className=' bg-white hover:bg-red-500 text-red-500 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent mt-4 w-1/3 transition relative flex justify-center' type='submit' value='Démarrer' onClick={copyLink}>INVITER
+                                        <button className='rounded-md bg-white hover:bg-red-500 text-red-500 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent mt-4 w-1/3 transition relative flex justify-center' type='submit' value='Démarrer' onClick={copyLink}>INVITER
                                             {
                                                 toggleBubleCopyLink ?
                                                     <div className='text-white p-1 absolute -bottom-8 left-[25%]'>
@@ -458,7 +458,7 @@ const Room = () => {
                                             }
                                         </button>
                                         {isHosting === '1' ?
-                                            <button className=' bg-white hover:bg-red-500 text-red-500 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent mt-4 w-1/3 transition flex justify-center' type='submit' value='Démarrer' onClick={launchGame}>DEMARRER
+                                            <button className='rounded-md bg-white hover:bg-red-500 text-red-500 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent mt-4 w-1/3 transition flex justify-center' type='submit' value='Démarrer' onClick={launchGame}>DEMARRER
                                                 {
                                                     (gameErrorMessage !== "") ?
                                                         <div className='text-white p-1 absolute -bottom-8 left-[25%]'>
