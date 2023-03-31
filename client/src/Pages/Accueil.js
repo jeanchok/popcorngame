@@ -54,7 +54,7 @@ const Accueil = () => {
                                     </svg>
                                     <p className='ml-4 flex text-left text-white group-hover:text-red-500 transition'>Choisissez le jeu iconique que vous préférez</p>
                                 </div>
-                                <div className='flex text-xl items-center p-2 border-white border hover:bg-slate-100 group transition h-full relative'>
+                                <div className='flex text-xl items-center p-2 border-white border hover:bg-slate-100 group transition h-full relative rounded-br-md'>
                                     <div className='absolute -top-4 -left-4 z-10 bg-white rounded-full w-8 h-8 font-bold flex items-center justify-center'>3</div>
                                     <svg className='micIcone group-hover:stroke-red-500 transition' width={46} height={46} fill="none" stroke="white" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M12 2a10 10 0 1 0 0 20 10 10 0 1 0 0-20z" />

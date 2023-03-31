@@ -39,8 +39,8 @@ const BackButton = ({ to, roomID }) => {
         <>
             {
                 to === '/room' ?
-                    <button onClick={(e) => { backToRoom(to) }}>
-                        <div className='bg-white flex p-2 mb-4 rounded group hover:bg-black hover:border border  transition'>
+                    <button onClick={(e) => { backToRoom(to) }} className=" mb-4">
+                        <div className='bg-white flex p-2 rounded group hover:bg-neutral-900 transition'>
                             <img src="/img/angle-de-la-fleche-pointant-vers-la-gauche.png" className='w-8 pr-2 group-hover:hidden transition' alt="flêche" />
                             <img src="/img/angle-de-la-fleche-pointant-vers-la-gauche-white.png" className='w-8 pr-2 hidden transition group-hover:block' alt="flêche" />
                             <nav className='text-black text-xl pr-2 font-bold group-hover:text-white transition'>
@@ -49,8 +49,8 @@ const BackButton = ({ to, roomID }) => {
                         </div>
                     </button>
                     :
-                    <button onClick={() => { backTo(to) }}>
-                        <div className='bg-white flex p-2 mb-4 rounded  group hover:bg-black hover:border border  transition'>
+                    <button onClick={() => { backTo(to) }} className=" mb-4">
+                        <div className='bg-white flex p-2 rounded  group hover:bg-neutral-900  transition'>
                             <img src="/img/angle-de-la-fleche-pointant-vers-la-gauche.png" className='w-8 pr-2 group-hover:hidden transition' alt="flêche" />
                             <img src="/img/angle-de-la-fleche-pointant-vers-la-gauche-white.png" className='w-8 pr-2 hidden transition group-hover:block' alt="flêche" />
                             <nav className='text-xl text-black pr-2 font-bold group-hover:text-white transition'>

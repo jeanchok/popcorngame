@@ -331,11 +331,11 @@ const Canva = ({ playersList, givenHint }) => {
                     :
                     drawerisChoosing ? `L'EXPRESSION EST EN TRAIN DE CHARGER...`
                         :
-                        wordToGuess ? <pre> {capitalizeFirstLetter(wordToGuess)}</pre>
+                        wordToGuess ? <pre className="font-sans"> {capitalizeFirstLetter(wordToGuess)}</pre>
                             :
                             null
             }</h2>
-            <div className='flex flex-col justify-between w-full md:h-[88%] h-full'>
+            <div className='flex flex-col justify-between w-full md:h-[88%] h-full relative'>
                 <div className=' flex flex-row m-auto justify-center align-center items-center mb-0 h-full w-full' >
                     {isChoosingWord ?
                         <div className={"flex align-center justify-center md:h-[250px] md:w-[450px] w-[90%] rounded-xl bg-neutral-800 z-10 absolute "}>
@@ -379,11 +379,10 @@ const Canva = ({ playersList, givenHint }) => {
                                 style={{ pointerEvents: "none" }}
                             />
                     }
-
                 </div>
                 {
                     isThedrawer ?
-                        <div className="bg-white flex space-around justify-center border-t-2 border-red-400">
+                        <div className="bg-white flex space-around justify-center items-center border-t-2 border-red-400 absolute bottom-0 w-full">
                             <div className="md:flex items-center justify-center hidden">
                                 <div className={"p-4 m-1 bg-" + currentColor} style={{ backgroundColor: currentColor }} >
                                 </div>

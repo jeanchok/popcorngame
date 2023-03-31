@@ -97,7 +97,7 @@ const Chat = () => {
 
     socket.on('round', ({ round }) => {
         setRound(round);
-        setMessageReceived([...messageReceived, { playerUsername: "PopCorn", message: `Début du round ${round} !` }])
+        setMessageReceived([{ playerUsername: "PopCorn", message: `Début du round ${round} !` }])
     })
 
     useEffect(() => {

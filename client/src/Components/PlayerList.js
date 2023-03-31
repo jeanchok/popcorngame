@@ -9,8 +9,8 @@ const PlayerList = ({ playersList }) => {
                     <h2 className='rounded-lg text-red-500 text-center pb-4 border-red-400 border-b-2 mb-4 text-xl font-semibold hidden md:block'>JOUEURS</h2>
                     <ul className='h-full overflow-y-auto md:overflow-hidden scrollbar flex flex-row md:flex-col'>
                         {playersList.map((player, index) =>
-                            <li key={index} className='rounded-md md:ml-6 items-center md:mb-2 w-[80px] md:w-[80%] md:h-14 bg-transparent border-white md:border border-l-transparent mr-2 flex flex-col md:flex-row h-full'>
-                                <div className='md:-ml-6 rounded-full w-14 m-auto overflow-hidden md:-mt-[1px] md:h-full h-1/2 flex md:block'>
+                            <li key={index} className='md:rounded-l-full rounded-md items-center md:min-h-[60px] md:mb-2 w-[80px] md:w-[95%] md:h-14 bg-transparent border-white md:border mr-2 flex flex-col md:flex-row h-full'>
+                                <div className='rounded-full w-14 m-auto overflow-hidden md:h-[95%] h-1/2 flex md:block'>
                                     <img className='object-cover bg w-full' src={`./img/avatars/${avatars[player.playerAvatarIndex]}.jpg`} alt={avatars[player.playerAvatarIndex]} />
                                 </div>
                                 <div className='w-[80%] md:pl-2 flex flex-col md:block '>
