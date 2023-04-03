@@ -22,8 +22,6 @@ const Canva = ({ playersList, givenHint }) => {
     const [isThedrawer, setIsThedrawer] = useState(false);
     const canvasRef = useRef(null);
     const contextRef = useRef(null);
-    const canvasDrawerRef = useRef(null);
-    //const RoomIdRef = useRef(null);
     //let RoomId = user.gameId;
     const [RoomId, setRoomId] = useState(user.gameId);
 
@@ -38,11 +36,9 @@ const Canva = ({ playersList, givenHint }) => {
     }, [user.gameId]);
 
     useEffect(() => {
-
         setWordToGuess(givenHint)
     }, [givenHint]);
 
-    console.log(givenHint, 'givenHintChild')
 
     useEffect(() => {
         // --------------- getContext() method returns a drawing context on the canvas-----
@@ -336,7 +332,7 @@ const Canva = ({ playersList, givenHint }) => {
                             null
             }</h2>
             <div className='flex flex-col justify-between w-full md:h-[88%] h-full relative'>
-                <div className=' flex flex-row m-auto justify-center align-center items-center mb-0 h-full w-full' >
+                <div className=' flex flex-row m-auto justify-center align-center items-center h-full w-full' >
                     {isChoosingWord ?
                         <div className={"flex align-center justify-center md:h-[250px] md:w-[450px] w-[90%] rounded-xl bg-neutral-800 z-10 absolute "}>
                             <div className="flex flex-col  align-center justify-center  gap-y-4 p-4">
@@ -382,7 +378,7 @@ const Canva = ({ playersList, givenHint }) => {
                 </div>
                 {
                     isThedrawer ?
-                        <div className="bg-white flex space-around justify-center items-center border-t-2 border-red-400 absolute bottom-0 w-full">
+                        <div className="bg-white flex space-around justify-center items-center border-t-2 border-red-400 bottom-0 w-full h-[42px]">
                             <div className="md:flex items-center justify-center hidden">
                                 <div className={"p-4 m-1 bg-" + currentColor} style={{ backgroundColor: currentColor }} >
                                 </div>

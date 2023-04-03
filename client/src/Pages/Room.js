@@ -353,7 +353,7 @@ const Room = () => {
                 <Header />
                 <img className='object-cover absolute h-screen w-screen bg-object bg-cover -z-10 top-0' src=".\img\fondpop.png" alt="popcorn rouge fond" />
                 <div className='bg-black/25 w-screen h-2/4 -z-10 absolute top-0'></div>
-                <section className='max-w-screen-xl bg-center justify-center md:w-[67%] md:h-[50%] w-[90%] h-[60%] mt-9o
+                <section className='max-w-screen-xl bg-center justify-center lg:w-[67%] lg:h-[50%] w-[90%] h-[60%] mt-9o
                  flex content-center z-10 relative fade-in  backdrop-blur'>
 
                     <div className='absolute -top-[68px] left-[15%]'>
@@ -362,18 +362,18 @@ const Room = () => {
                     <div className="w-20 absolute right-[15%] -top-[72px]">
                         <SoundButton />
                     </div>
-                    <div className=' m-auto min-h-1/2 border-white/20 border bg-slate-50 bg-opacity-10 h-full flex rounded-md flex-col md:flex-row w-full'>
+                    <div className=' m-auto min-h-1/2 border-white/20 border bg-slate-50 bg-opacity-10 h-full flex rounded-md flex-col lg:flex-row w-full'>
 
                         <PlayerList playersList={playersList} />
 
 
-                        <div className='bg-transparent h-full md:w-[80%] w-full'>
-                            <h2 className='text-white border-white/20 border text-center flex items-center justify-center md:block md:pb-4 md:pt-4 border-red-400 border-l-2 text-xl font-semibold h-[15%]'>CHOISIR LE JEU</h2>
-                            <div className='flex flex-col bg-neutral-900 h-full md:h-[85%] w-full border-white/20 border gap-2 rounded-br-lg items-center'>
-                                <div className='md:w-[80%] flex flex-col h-full justify-between w-full'>
+                        <div className='bg-transparent h-full lg:w-[80%] w-full'>
+                            <h2 className='text-white border-white/20 border text-center flex items-center justify-center lg:block lg:pb-4 lg:pt-4 border-red-400 border-l-2 text-xl font-semibold h-[15%]'>CHOISIR LE JEU</h2>
+                            <div className='flex flex-col bg-neutral-900 h-full lg:h-[85%] w-full border-white/20 border gap-2 rounded-br-lg items-center'>
+                                <div className='lg:w-[80%] flex flex-col h-full justify-between w-full'>
 
 
-                                    <div className='md:h-full h-[75%] flex flex-row justify-between p-6 mb-0 gap-4 overflow-x-auto w-full'>
+                                    <div className='lg:h-full h-[75%] flex flex-row justify-between p-6 mb-0 gap-4 overflow-x-auto w-full'>
                                         {/* {games.map((game) =>
                                         <button key={game} onClick={selectGame} className={selectedGame ? 'bg-red h-full' : 'bg-white h-full'}>
                                             <h3 className='flex justify-center h-full items-center'>{game}</h3>
@@ -382,7 +382,6 @@ const Room = () => {
                                         {
                                             (isHosting === '1') ?
                                                 <>
-
                                                     <div className='wrapper aspect-[3/4] h-full group'>
                                                         <button onClick={selectedGame1 ? null : selectGame1} className={selectedGame1 ? 'group-hover:translate-x-[9px] relative z-10 ease-in transition duration-75 group-hover:-translate-y-[9px] w-full max-h-full delay-75 bg-red h-full text-white border-2 border-white' : 'bg-white h-full group-hover:translate-x-[9px] group-hover:-translate-y-[9px] relative z-10 ease-in duration-75 transition delay-75'}>
                                                             <img src="/img/picass.webp" alt="picass" />
@@ -394,6 +393,9 @@ const Room = () => {
                                                     </div>
                                                     <div className='wrapper aspect-[3/4] h-full group '>
                                                         <button onClick={selectedGame2 ? null : selectGame2} className={selectedGame2 ? 'group-hover:translate-x-[9px] relative z-10 ease-in transition duration-75 group-hover:-translate-y-[9px] max-w-full max-h-full delay-75 bg-red h-full text-white border-2 border-white' : 'bg-white h-full group-hover:translate-x-[9px] group-hover:-translate-y-[9px] relative z-10 ease-in duration-75 transition delay-75'}>
+                                                            <div className='h-full w-full bg-black/70 flex justify-center items-center absolute top-0'>
+                                                                <h3 className=' text-white font-semibold text-xl'>Bientôt</h3>
+                                                            </div>
                                                             <img src="/img/auplusproche.webp" alt="au plus proche" />
                                                         </button>
                                                         <div className='cornerRight'></div>
@@ -403,6 +405,9 @@ const Room = () => {
                                                     </div>
                                                     <div className='wrapper aspect-[3/4] h-full group'>
                                                         <button onClick={selectedGame3 ? null : selectGame3} className={selectedGame3 ? 'group-hover:translate-x-[9px] group-hover:-translate-y-[9px] relative z-10 ease-in transition duration-75 delay-75 max-w-full max-h-full bg-red h-full text-white border-2 border-white items-center' : 'bg-white h-full group-hover:translate-x-[9px] group-hover:-translate-y-[9px] relative z-10 ease-in duration-75 transition delay-75'}>
+                                                            <div className='h-full w-full bg-black/70 flex justify-center items-center absolute top-0'>
+                                                                <h3 className=' text-white font-semibold text-xl'>Bientôt</h3>
+                                                            </div>
                                                             <img src="/img/rat2.webp" alt="rat de star" />
                                                         </button>
                                                         <div className='cornerRight'></div>
@@ -425,6 +430,9 @@ const Room = () => {
                                                     </div>
                                                     <div className='wrapper aspect-[3/4] h-full group'>
                                                         <div className={selectedGame2 ? 'group-hover:translate-x-[9px] group-hover:-translate-y-[9px] relative z-10 ease-in transition duration-75 delay-75 aspect-[3/4] bg-red h-full text-white border-2 border-white flex items-center' : 'flex items-center bg-white h-full group-hover:translate-x-[9px] group-hover:-translate-y-[9px] relative z-10 ease-in duration-75 transition aspect-[3/4] delay-75'}>
+                                                            <div className='h-full w-full bg-black/70 flex justify-center items-center absolute top-0'>
+                                                                <h3 className=' text-white font-semibold text-xl'>Bientôt</h3>
+                                                            </div>
                                                             <img src="/img/auplusproche.webp" alt="picass" />
                                                         </div>
                                                         <div className='cornerRight'></div>
@@ -434,6 +442,9 @@ const Room = () => {
                                                     </div>
                                                     <div className='wrapper aspect-[3/4] h-full group'>
                                                         <div className={selectedGame3 ? 'group-hover:translate-x-[9px] group-hover:-translate-y-[9px] relative z-10 ease-in transition duration-75 delay-75 aspect-[3/4] bg-red h-full text-white border-2 border-white flex items-center' : 'flex items-center bg-white h-full group-hover:translate-x-[9px] group-hover:-translate-y-[9px] relative z-10 ease-in duration-75 transition aspect-[3/4] delay-75'}>
+                                                            <div className='h-full w-full bg-black/70 flex justify-center items-center absolute top-0'>
+                                                                <h3 className=' text-white font-semibold text-xl'>Bientôt</h3>
+                                                            </div>
                                                             <img src="/img/rat2.webp" alt="picass" />
                                                         </div>
                                                         <div className='cornerRight'></div>
@@ -446,7 +457,7 @@ const Room = () => {
                                         }
 
                                     </div>
-                                    <div className='flex w-full md:m-auto justify-around md:mt-10 md:mb-10 relative md:p-0 pb-5'>
+                                    <div className='flex w-full lg:m-auto justify-around lg:mt-10 lg:mb-10 relative lg:p-0 pb-5'>
 
                                         <button className='rounded-md bg-white hover:bg-red-500 text-red-500 font-semibold hover:text-white py-2 px-4 hover:border-transparent mt-4 w-1/3 transition relative flex justify-center' type='submit' value='Démarrer' onClick={copyLink}>INVITER
                                             {

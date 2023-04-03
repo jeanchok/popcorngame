@@ -89,7 +89,7 @@ class Game {
 
         games[roomID] = {
             rounds: 2,
-            time: 50 * 1000,
+            time: 60 * 1000,
         };
         // games[roomID][socket.id] = {};
         // games[roomID][socket.id].score = 0;

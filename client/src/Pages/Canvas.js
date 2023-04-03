@@ -128,6 +128,19 @@ export function Canvas() {
         console.log(hints, 'Hints');
     }
 
+    const handleBeforeUnload = (e) => {
+        e.preventDefault();
+        e.returnValue = 'Voulez-vous vraiment quitter cette page?';
+    };
+
+    useEffect(() => {
+        window.addEventListener('beforeunload', handleBeforeUnload);
+
+        return () => {
+            window.removeEventListener('beforeunload', handleBeforeUnload);
+        };
+    }, []);
+
     // const updateSize = () => {
     //     if (window.innerWidth > 1024) {
     //         let ratio = window.innerWidth * 0.8 / 1500
@@ -151,8 +164,8 @@ export function Canvas() {
 
         <>
 
-            <main className='flex flex-col items-center md:gap-2 h-full m-auto relative'>
-                <div className="md:block hidden">
+            <main className='flex flex-col items-center lg:gap-2 h-full m-auto relative'>
+                <div className="lg:block hidden">
                     <Header />
                 </div>
                 <img className='object-cover absolute h-screen w-screen bg-object bg-cover -z-10 top-0' src=".\img\fondpop.png" alt="popcorn rouge fond" />
@@ -169,18 +182,18 @@ export function Canvas() {
                     endGame ?
                         <ResultsGameOverlay winnerName={winnerName} playersList={playersList} roomID={sessionId} />
                         :
-                        <section className={`w-full h-full md:w-[80%] md:h-[60%] bg-center justify-center mt-9o
+                        <section className={`w-full h-full lg:w-[80%] lg:h-[60%] bg-center justify-center mt-9o
                  flex content-center z-10 relative fade-in  backdrop-blur`}
                             style={(window.innerWidth > 768) ? { transform: `scale(${scaleRatio})` } : null}
                         >
 
-                            <div className='absolute -top-[68px] left-[2%] md:block hidden'>
+                            <div className='absolute -top-[68px] left-[2%] lg:block hidden'>
                                 <BackButton to={"/"} roomID={null} />
                             </div>
-                            <div className="w-20 absolute right-[15%] -top-[72px] md:block hidden">
+                            <div className="w-20 absolute right-[15%] -top-[72px] lg:block hidden">
                                 <SoundButton />
                             </div>
-                            <div className=' min-h-[70%] border-white/20 border bg-slate-50 bg-opacity-10 flex rounded-md backdrop-blur-sm md:w-full w-full flex-col md:flex-row'>
+                            <div className=' min-h-[70%] border-white/20 border bg-slate-50 bg-opacity-10 flex rounded-md backdrop-blur-sm lg:w-full w-full flex-col lg:flex-row'>
 
                                 <PlayerList playersList={playersList} />
 

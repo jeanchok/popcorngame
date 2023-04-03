@@ -14,7 +14,7 @@ const Accueil = () => {
                 <img className='object-cover absolute h-screen w-screen bg-object bg-cover -z-10 top-0' src=".\img\fondpop.png" alt="popcorn rouge fond" />
                 <div className='bg-black/25 w-screen h-2/4 -z-10 absolute top-0'></div>
                 <section className='max-w-screen-xl bg-center justify-center w-auto h-[45%] md:h-[45%] mt-9o
-                 flex content-center z-10 relative fade-in backdrop-blur'>
+                 flex content-center z-10 relative fade-in backdrop-blur max-h-[436px] '>
                     <div className="w-20 absolute right-[15%] -top-[72px]">
                         <SoundButton />
                     </div>

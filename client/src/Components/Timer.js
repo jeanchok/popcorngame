@@ -26,8 +26,6 @@ const Timer = ({ updateGivenHint }) => {
         socket.on('startTimer', ({ time }) => {
             setTime(time)
             setSeconds(time / 1000);
-            console.log('startTimer', time)
-
         })
     }, [socket]);
 
@@ -67,22 +65,22 @@ const Timer = ({ updateGivenHint }) => {
         switchColorTimer ? setSwitchColorTimer(false) : setSwitchColorTimer(true)
     }
 
-    useEffect(() => {
-        if (seconds < 6) {
-            changeColor();
-        }
+    // useEffect(() => {
+    if (seconds < 6) {
+        changeColor();
+    }
 
-        if (seconds === 5 && soundOn) {
-            secLeft.play()
-        }
+    if (seconds === 5 && soundOn) {
+        secLeft.play()
+    }
 
-        if (seconds === 1) {
-            clearInterval(nIntervId);
-            // release our intervalID from the variable
-            nIntervId = null;
-            secLeft.remove();
-        }
-    }, []);
+    if (seconds === 1) {
+        clearInterval(nIntervId);
+        // release our intervalID from the variable
+        nIntervId = null;
+        secLeft.remove();
+    }
+    // }, []);
 
 
     return (
@@ -92,9 +90,10 @@ const Timer = ({ updateGivenHint }) => {
                     (seconds >= 0) ?
                         <div className={
                             switchColorTimer ?
-                                'flex justify-center mb-2 mt-5 border border-black font-bold text-black py-1 px-2 text-xl z-20 bg-white md:relative md:top-0 md:left-0 absolute top-[54%] left-[2%]'
+                                'flex justify-center mb-2 mt-5 border border-white font-bold text-white py-1 px-2 text-xl z-20 bg-zinc-800 md:relative md:top-0 md:left-0 absolute top-[54%] left-[2%]'
                                 :
-                                'flex justify-center mb-2 mt-5 border border-white font-bold text-white py-1 px-2 text-xl z-20 bg-zinc-800 md:relative md:top-0 md:left-0 absolute top-[54%] left-[2%]'}>
+                                'flex justify-center mb-2 mt-5 border border-black font-bold text-black py-1 px-2 text-xl z-20 bg-white md:relative md:top-0 md:left-0 absolute top-[54%] left-[2%]'
+                        }>
                             {seconds}
                         </div>
                         : <div className='md:flex justify-center mb-2 mt-5 h-[41px] py-1 px-2 text-xl hidden'></div>

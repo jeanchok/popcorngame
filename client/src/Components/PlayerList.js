@@ -4,17 +4,17 @@ import { avatars } from "../constant/const.js"
 const PlayerList = ({ playersList }) => {
     return (
         <>
-            <div className='flex flex-col md:m-6 md:w-[28%]  w-full h-[124px] md:h-full p-2 md:p-0'>
+            <div className='flex flex-col lg:m-6 lg:w-[28%]  w-full h-[124px] lg:h-full p-2 lg:p-0'>
                 <div className='flex flex-col h-full'>
-                    <h2 className='rounded-lg text-red-500 text-center pb-4 border-red-400 border-b-2 mb-4 text-xl font-semibold hidden md:block'>JOUEURS</h2>
-                    <ul className='h-full overflow-y-auto md:overflow-hidden scrollbar flex flex-row md:flex-col'>
+                    <h2 className='rounded-lg text-red-500 text-center pb-4 border-red-400 border-b-2 mb-4 text-xl font-semibold hidden lg:block'>JOUEURS</h2>
+                    <ul className='h-full overflow-y-auto lg:overflow-hidden scrollbar flex flex-row lg:flex-col'>
                         {playersList.map((player, index) =>
-                            <li key={index} className='md:rounded-l-full rounded-md items-center md:min-h-[60px] md:mb-2 w-[80px] md:w-[95%] md:h-14 bg-transparent border-white md:border mr-2 flex flex-col md:flex-row h-full'>
-                                <div className='rounded-full w-14 m-auto overflow-hidden md:h-[95%] h-1/2 flex md:block'>
+                            <li key={index} className='lg:rounded-l-full rounded-lg items-center lg:min-h-[60px] lg:mb-2 w-[80px] lg:w-[95%] lg:h-14 bg-transparent border-white lg:border mr-2 flex flex-col lg:flex-row h-full'>
+                                <div className='rounded-full w-14 m-auto overflow-hidden lg:h-[95%] h-1/2 flex lg:block'>
                                     <img className='object-cover bg w-full' src={`./img/avatars/${avatars[player.playerAvatarIndex]}.jpg`} alt={avatars[player.playerAvatarIndex]} />
                                 </div>
-                                <div className='w-[80%] md:pl-2 flex flex-col md:block '>
-                                    <h3 className='text-white md:m-auto text-center md:text-left items-center mr-4 truncate pt-0'>{player.name}</h3>
+                                <div className='w-[80%] lg:pl-2 flex flex-col lg:block '>
+                                    <h3 className='text-white lg:m-auto text-center lg:text-left items-center mr-4 truncate pt-0'>{player.name}</h3>
                                     <strong className='text-white text-center'>{player.score} Pts</strong>
                                 </div>
                             </li>
