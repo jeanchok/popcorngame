@@ -295,7 +295,7 @@ const Room = () => {
             await setStartCountdownOverlay(true);
             setTimeout(() => {
                 startGame();
-            }, 3000);
+            }, 1);
         }
         socket.on('startCountdown', startCountdown);
 

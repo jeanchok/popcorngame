@@ -321,8 +321,8 @@ const Canva = ({ playersList, givenHint }) => {
     }
 
     return (
-        <div className='w-full h-full flex flex-col'>
-            <h2 className='text-white  font-semibold text-center pb-4 pt-4 border-red-400 border-l-2 border-r-2 text-xl h-auto md:h-[12%]'>{
+        <div className='w-full h-full flex flex-col relative'>
+            <h2 className='text-white  font-semibold text-center pb-4 pt-4 border-red-400 border-l-2 border-r-2 lg:h-[60px] text-xl'>{
                 isChoosingWord ? 'CHOISISSEZ UNE EXPRESSION !'
                     :
                     drawerisChoosing ? `L'EXPRESSION EST EN TRAIN DE CHARGER...`
@@ -331,14 +331,14 @@ const Canva = ({ playersList, givenHint }) => {
                             :
                             null
             }</h2>
-            <div className='flex flex-col justify-between w-full md:h-[88%] h-full relative'>
-                <div className=' flex flex-row m-auto justify-center align-center items-center h-full w-full' >
+            <div className='flex flex-col justify-between w-full relative h-inherit'>
+                <div className=' flex flex-row m-auto justify-center align-center items-center w-full h-full relative' >
                     {isChoosingWord ?
                         <div className={"flex align-center justify-center md:h-[250px] md:w-[450px] w-[90%] rounded-xl bg-neutral-800 z-10 absolute "}>
                             <div className="flex flex-col  align-center justify-center  gap-y-4 p-4">
                                 {wordsChoice.map((words, index) =>
                                     <div className="flex items-center" key={index}>
-                                        <button onClick={(e) => { chooseWord(words) }} className="h-[41px] whitespace-nowrap hover:bg-red-500 hover:border-transparent transition text-white border-1 font-bold py-2 px-4 border border-red-700">
+                                        <button onClick={(e) => { chooseWord(words) }} className="h-[41px] rounded-md whitespace-nowrap hover:bg-red-500 hover:border-transparent transition text-white border-1 font-bold py-2 px-4 border border-red-700">
                                             Celle-la !
                                         </button>
                                         <p className="ml-2 py-2 text-white px-4 font-bold">{capitalizeFirstLetter(words)}</p>
@@ -366,7 +366,7 @@ const Canva = ({ playersList, givenHint }) => {
                     }
                     {
                         isThedrawer && !isChoosingWord ?
-                            <canvas className="h-full w-full bg-white"
+                            <canvas className="w-full h-full bg-white"
                                 ref={canvasRef}
                             />
                             :
@@ -376,65 +376,66 @@ const Canva = ({ playersList, givenHint }) => {
                             />
                     }
                 </div>
-                {
-                    isThedrawer ?
-                        <div className="bg-white flex space-around justify-center items-center border-t-2 border-red-400 bottom-0 w-full h-[42px]">
-                            <div className="md:flex items-center justify-center hidden">
-                                <div className={"p-4 m-1 bg-" + currentColor} style={{ backgroundColor: currentColor }} >
-                                </div>
-                            </div>
-                            <div className="flex items-center justify-center h-full flex-col">
-                                <div className="flex flex-raw">
-                                    {colors1.map(color => (
-                                        <button onClick={() => { changeColor(color.value); setCurrentColor(color.value) }} value={color.value} className={`bg-${color.name} p-2 color ${color.value}`} style={{ backgroundColor: color.value }}></button>
-                                    ))}
-                                </div>
-                                <div className="flex flex-raw">
-                                    {colors2.map(color => (
-                                        <button onClick={() => { changeColor(color.value); setCurrentColor(color.value) }} value={color.value} className={`bg-${color.name} p-2 color ${color.value}`} style={{ backgroundColor: color.value }}></button>
-                                    ))}
-                                </div>
-                            </div>
-                            <div className="flex items-center justify-center">
-                                <button className=" m-1 w-8" onClick={() => setFillingMode(false)}>
-                                    <img className='w-full h-full' src=".\img\icons8-crayon-64.png" alt="logo crayon" />
-                                </button>
-                            </div>
-                            <div className="md:flex items-center justify-center hidden">
-                                <button onClick={() => { changeColor('white'); setCurrentColor('white') }} className=" m-1 w-8">
-                                    <img className='w-full h-full' src=".\img\icons8-eraser-64.png" alt="logo gomme" />
-                                </button>
-                            </div>
-                            <div className="flex items-center justify-center">
-                                <button onClick={() => changeLineWidth(35)} className="m-1 w-8 h-8 flex items-center justify-center">
-                                    <div className="rounded-full bg-black w-7 h-7"></div>
-                                </button>
-                            </div>
-                            <div className="flex items-center justify-center">
-                                <button onClick={() => changeLineWidth(25)} className=" m-1 w-8 h-8 flex items-center justify-center">
-                                    <div className="rounded-full bg-black w-6 h-6"></div>
-                                </button>
-                            </div>
-                            <div className="flex items-center justify-center">
-                                <button onClick={() => changeLineWidth(15)} className=" m-1 w-8 h-8 flex items-center justify-center">
-                                    <div className="rounded-full bg-black w-4 h-4"></div>
-                                </button>
-                            </div>
-                            <div className="flex items-center justify-center">
-                                <button onClick={() => changeLineWidth(5)} className=" m-1 w-8 h-8 flex items-center justify-center">
-                                    <div className="rounded-full bg-black w-2 h-2"></div>
-                                </button>
-                            </div>
-                            <div className="flex items-center justify-center">
-                                <button className=" m-1 w-8" onClick={() => clearCanvas()}>
-                                    <img className='w-full h-full' src=".\img\icons8-bin-60.png" alt="logo poubelle" />
-                                </button>
+
+            </div>
+            {
+                isThedrawer ?
+                    <div className="bg-white flex space-around justify-center items-center border-t-2 border-red-400 bottom-0 w-full h-[42px]">
+                        <div className="md:flex items-center justify-center hidden">
+                            <div className={"p-4 m-1 bg-" + currentColor} style={{ backgroundColor: currentColor }} >
                             </div>
                         </div>
-                        :
-                        null
-                }
-            </div>
+                        <div className="flex items-center justify-center h-full flex-col">
+                            <div className="flex flex-raw">
+                                {colors1.map(color => (
+                                    <button onClick={() => { changeColor(color.value); setCurrentColor(color.value) }} value={color.value} className={`bg-${color.name} p-2 color ${color.value}`} style={{ backgroundColor: color.value }}></button>
+                                ))}
+                            </div>
+                            <div className="flex flex-raw">
+                                {colors2.map(color => (
+                                    <button onClick={() => { changeColor(color.value); setCurrentColor(color.value) }} value={color.value} className={`bg-${color.name} p-2 color ${color.value}`} style={{ backgroundColor: color.value }}></button>
+                                ))}
+                            </div>
+                        </div>
+                        <div className="flex items-center justify-center">
+                            <button className=" m-1 w-8" onClick={() => setFillingMode(false)}>
+                                <img className='w-full h-full' src=".\img\icons8-crayon-64.png" alt="logo crayon" />
+                            </button>
+                        </div>
+                        <div className="md:flex items-center justify-center hidden">
+                            <button onClick={() => { changeColor('white'); setCurrentColor('white') }} className=" m-1 w-8">
+                                <img className='w-full h-full' src=".\img\icons8-eraser-64.png" alt="logo gomme" />
+                            </button>
+                        </div>
+                        <div className="flex items-center justify-center">
+                            <button onClick={() => changeLineWidth(35)} className="m-1 w-8 h-8 flex items-center justify-center">
+                                <div className="rounded-full bg-black w-7 h-7"></div>
+                            </button>
+                        </div>
+                        <div className="flex items-center justify-center">
+                            <button onClick={() => changeLineWidth(25)} className=" m-1 w-8 h-8 flex items-center justify-center">
+                                <div className="rounded-full bg-black w-6 h-6"></div>
+                            </button>
+                        </div>
+                        <div className="flex items-center justify-center">
+                            <button onClick={() => changeLineWidth(15)} className=" m-1 w-8 h-8 flex items-center justify-center">
+                                <div className="rounded-full bg-black w-4 h-4"></div>
+                            </button>
+                        </div>
+                        <div className="flex items-center justify-center">
+                            <button onClick={() => changeLineWidth(5)} className=" m-1 w-8 h-8 flex items-center justify-center">
+                                <div className="rounded-full bg-black w-2 h-2"></div>
+                            </button>
+                        </div>
+                        <div className="flex items-center justify-center">
+                            <button className=" m-1 w-8" onClick={() => clearCanvas()}>
+                                <img className='w-full h-full' src=".\img\icons8-bin-60.png" alt="logo poubelle" />
+                            </button>
+                        </div>
+                    </div>
+                    :
+                    null
+            }
         </div>
     );
 };

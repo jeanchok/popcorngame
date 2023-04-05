@@ -8,7 +8,11 @@ module.exports = {
   ],
   mode: 'jit',
   theme: {
-    extend: {},
+    extend: {
+      height: {
+        'inherit': 'inherit',
+      },
+    },
 
   },
   plugins: [],

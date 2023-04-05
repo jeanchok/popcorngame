@@ -197,7 +197,9 @@ export function Canvas() {
 
                                 <PlayerList playersList={playersList} />
 
+
                                 <Canva playersList={playersList} givenHint={givenHint} />
+
                                 <Chat />
                             </div>
                         </section>
