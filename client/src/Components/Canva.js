@@ -1,8 +1,7 @@
-import { emit } from "process";
-import React, { useEffect, useContext, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useSocket } from "../context/socket";
 import { colors1, colors2 } from "../constant/const";
-import { useUser, useUserUpdate } from '.././context/user';
+import { useUser } from '.././context/user';
 
 const Canva = ({ playersList, givenHint }) => {
     const user = useUser();
@@ -10,24 +9,15 @@ const Canva = ({ playersList, givenHint }) => {
     const [isDrawing, setIsDrawing] = useState(false);
     const [isChoosingWord, setIsChoosingWord] = useState(false);
     const [drawerisChoosing, setDrawerisChoosing] = useState(false);
-    const [roundStarted, setRoundStarted] = useState(false);
-    const [fillingMode, setFillingMode] = useState(false);
     const [currentColor, setCurrentColor] = useState('black');
     const [currentLineWidth, setCurrentLineWidth] = useState(25);
-    // const [hints, setHints] = useState([]);
-    const [givenHintUpdated, setGivenHintsUpdated] = useState();
     const [wordsChoice, setWordsChoice] = useState([]);
     const [wordToGuess, setWordToGuess] = useState('');
     const [drawer, setDrawer] = useState('');
     const [isThedrawer, setIsThedrawer] = useState(false);
     const canvasRef = useRef(null);
     const contextRef = useRef(null);
-    //let RoomId = user.gameId;
     const [RoomId, setRoomId] = useState(user.gameId);
-
-    const [fillPaths, setFillPaths] = useState([]);
-    //const [points, setPoints] = useState([]);
-    const [canvasPaths, setCanvasPaths] = useState([]);
     const socketRef = useRef();
 
     useEffect(() => {
@@ -42,19 +32,11 @@ const Canva = ({ playersList, givenHint }) => {
 
     useEffect(() => {
         // --------------- getContext() method returns a drawing context on the canvas-----
-
-
         const canvas = canvasRef.current;
-        // canvas.width = canvas.clientWidth * 2;
-        // canvas.height = canvas.clientHeight * 2;
-
         canvas.width = canvas.getBoundingClientRect().width * 2;
         canvas.height = canvas.getBoundingClientRect().height * 2;
-
         canvas.style.width = canvas.width;
         canvas.style.height = canvas.height;
-
-
         const context = canvas.getContext("2d");
         context.scale(2, 2);
         context.lineCap = "round";
@@ -71,32 +53,15 @@ const Canva = ({ playersList, givenHint }) => {
             color: currentColor,
         };
 
-        // const colors = document.getElementsByClassName('color');
-
-        // // helper that will update the current color
-        // const onColorUpdate = (e) => {
-
-        //     current.color = e.target.value;
-        //     console.log('onColorUpdate', current.color)
-        // };
-
-        // // loop through the color elements and add the click event listeners
-        // for (let i = 0; i < colors.length; i++) {
-        //     colors[i].addEventListener('click', onColorUpdate, false);
-        // }
-
-        let drawing = false;
-
 
         // ------------------------------- create the drawing ----------------------------
         let points = [];
+        let drawing = false;
 
         const drawLine = (x0, y0, x1, y1, color, size, emit) => {
             context.beginPath();
             context.moveTo(x0, y0);
             context.lineTo(x1, y1);
-            //context.strokeStyle = current.color;
-            // context.lineWidth = size;
             context.stroke();
             context.closePath();
 
@@ -113,12 +78,12 @@ const Canva = ({ playersList, givenHint }) => {
             })
         };
 
-        const midPointBtw = (p1, p2) => {
-            return {
-                x: p1.x + (p2.x - p1.x) / 2,
-                y: p1.y + (p2.y - p1.y) / 2
-            };
-        };
+        // const midPointBtw = (p1, p2) => {
+        //     return {
+        //         x: p1.x + (p2.x - p1.x) / 2,
+        //         y: p1.y + (p2.y - p1.y) / 2
+        //     };
+        // };
 
 
         // ---------------- mouse movement --------------------------------------
@@ -183,6 +148,7 @@ const Canva = ({ playersList, givenHint }) => {
 
         // window.addEventListener('resize', onResize, false);
         // onResize();
+
         // ----------------------- socket.io connection ----------------------------
         const onDrawingEvent = (data) => {
             const w = canvas.width;
@@ -190,7 +156,6 @@ const Canva = ({ playersList, givenHint }) => {
             drawLine(data.x0 * w, data.y0 * h, data.x1 * w, data.y1 * h, data.color, data.size);
 
         }
-
         socketRef.current = socket;
         socket.on('drawing', onDrawingEvent);
     }, [socket]);
@@ -198,11 +163,6 @@ const Canva = ({ playersList, givenHint }) => {
 
 
     useEffect(() => {
-        // socket.on('hideWord', ({ word }) => {
-        //     setWordToGuess(word);
-        // });
-
-
         socket.on('changeColor', async (data) => {
             console.log('changeColor')
             const canvas = canvasRef.current;
@@ -216,15 +176,12 @@ const Canva = ({ playersList, givenHint }) => {
             const canvas = canvasRef.current;
             const context = canvas.getContext("2d");
             context.lineWidth = await data.size;
-            //contextRef.current = context;
         })
 
         socket.on('clearCanvas', async () => {
             const canvas = canvasRef.current;
             const context = canvas.getContext("2d");
             context.clearRect(0, 0, canvas.width, canvas.height);
-            // context.fillStyle = "white";
-            // context.fillRect(0, 0, canvas.width, canvas.height);
         })
 
         socket.on('choosing', async ({ name }) => {
@@ -237,7 +194,6 @@ const Canva = ({ playersList, givenHint }) => {
     }, [socket]);
 
     useEffect(() => {
-
         const chooseWord = async ([word1, word2, word3]) => {
             setIsThedrawer(true);
             await setDrawerisChoosing(false);
@@ -245,7 +201,6 @@ const Canva = ({ playersList, givenHint }) => {
             setWordsChoice([word1, word2, word3]);
             console.log('chooseWordOn')
         }
-
         socket.on('chooseWord', chooseWord);
 
         return () => {
@@ -257,7 +212,6 @@ const Canva = ({ playersList, givenHint }) => {
         const hideWord = ({ word }) => {
             setWordToGuess(word);
         }
-
         socket.on('hideWord', hideWord);
 
         return () => {
@@ -265,13 +219,11 @@ const Canva = ({ playersList, givenHint }) => {
         };
     }, [socket]);
 
-
     useEffect(() => {
         const startTimer = () => {
             setDrawerisChoosing(false);
             console.log('startTimer')
         }
-
         socket.on('startTimer', startTimer)
 
         return () => {
@@ -288,32 +240,25 @@ const Canva = ({ playersList, givenHint }) => {
     };
 
     const clearCanvas = () => {
-
         const canvas = canvasRef.current;
         const context = canvas.getContext("2d");
         context.clearRect(0, 0, canvas.width, canvas.height);
-
         socket.emit('clearCanvas', RoomId);
-
     };
 
     const changeColor = (color) => {
         const canvas = canvasRef.current;
         const context = canvas.getContext("2d");
         context.strokeStyle = color;
-        //contextRef.current = context;
         socket.emit('changeColor', { RoomId: RoomId, color });
-
     };
 
     const changeLineWidth = (size) => {
         const canvas = canvasRef.current
         const context = canvas.getContext("2d")
         context.lineWidth = size;
-        //contextRef.current = context;
         socket.emit('changeLineWidth', { RoomId: RoomId, size });
     };
-
 
     const capitalizeFirstLetter = (string) => {
         console.log(string, 'capitalizeFirstLetter', string.charAt(0).toUpperCase() + string.slice(1))
@@ -376,7 +321,6 @@ const Canva = ({ playersList, givenHint }) => {
                             />
                     }
                 </div>
-
             </div>
             {
                 isThedrawer ?
@@ -398,7 +342,7 @@ const Canva = ({ playersList, givenHint }) => {
                             </div>
                         </div>
                         <div className="flex items-center justify-center">
-                            <button className=" m-1 w-8" onClick={() => setFillingMode(false)}>
+                            <button className=" m-1 w-8">
                                 <img className='w-full h-full' src=".\img\icons8-crayon-64.png" alt="logo crayon" />
                             </button>
                         </div>

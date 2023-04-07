@@ -35,7 +35,7 @@ export function Canvas() {
     let roundEndSound = new Audio("/sounds/roundEnd.mp3")
     let endGameSound = new Audio("/sounds/finish.mp3")
     const user = useUser();
-    const [sessionId, setSessionId] = useState(user.gameId);
+    const [gameId, setGameId] = useState(user.gameId);
     const [scaleRatio, setScaleRatio] = useState(null);
 
     const [sectionWidth, setSectionWidth] = useState('');
@@ -55,10 +55,9 @@ export function Canvas() {
     }, [seconds]);
 
     useEffect(() => {
-        setSessionId(user.gameId);
+        setGameId(user.gameId);
         console.log('useEffectRoomId: ' + user.gameId);
     }, [user.gameId]);
-    //let sessionId = sessionStorage.getItem('id');
 
     if (startSoundEndGame && soundOn) {
         endGameSound.play();
@@ -180,7 +179,7 @@ export function Canvas() {
 
                 {
                     endGame ?
-                        <ResultsGameOverlay winnerName={winnerName} playersList={playersList} roomID={sessionId} />
+                        <ResultsGameOverlay winnerName={winnerName} playersList={playersList} roomID={gameId} />
                         :
                         <section className={`w-full h-full lg:w-[80%] lg:h-[60%] bg-center justify-center mt-9o
                  flex content-center z-10 relative fade-in  backdrop-blur`}
@@ -193,7 +192,7 @@ export function Canvas() {
                             <div className="w-20 absolute right-[15%] -top-[72px] lg:block hidden">
                                 <SoundButton />
                             </div>
-                            <div className=' min-h-[70%] border-white/20 border bg-slate-50 bg-opacity-10 flex rounded-md backdrop-blur-sm lg:w-full w-full flex-col lg:flex-row'>
+                            <div className=' min-h-[70%] border-white/20 border bg-slate-50 bg-opacity-10 flex rounded-md backdrop-blur-sm lg:w-full w-full flex-col lg:flex-row mt[70px]'>
 
                                 <PlayerList playersList={playersList} />
 

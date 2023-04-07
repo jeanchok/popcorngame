@@ -1,5 +1,9 @@
 const avatars = ["Domingo", "Baghera", "Etoile", "Ava", "Ponce", "Horty", "LBW", "Poulpe", "Maghla", "Zack", "Marie", "Rivenzi", "Ultia", "Xari"];
-export { avatars }
+
+const gamesList = [
+    { name: 'Le Picass', id: 1, img: '/img/picass.webp', available: true },
+    { name: 'Rat de Stars', id: 2, img: '/img/rat2.webp', available: false },
+    { name: 'Au + Proche', id: 3, img: '/img/auplusproche.webp', available: false }];
 
 const colors1 = [{ name: 'white', value: 'white' }, { name: 'slate-400', value: 'rgb(148 163 184)' },
 { name: 'red-400', value: 'rgb(252 165 165)' },
@@ -16,4 +20,4 @@ const colors2 = [{ name: 'black', value: 'black' }, { name: 'slate-700', value: 
     , { name: 'blue-700', value: 'rgb(29 78 216)' }, { name: 'purple-700', value: 'rgb(126 34 206)' }
     , { name: 'pink-700', value: 'rgb(190 24 93)' }
 ]
-export { colors1, colors2 }
+export { colors1, colors2, avatars, gamesList }

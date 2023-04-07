@@ -4,7 +4,7 @@ import { avatars } from "../constant/const.js"
 const PlayerList = ({ playersList }) => {
     return (
         <>
-            <div className='flex flex-col lg:m-6 lg:w-[28%]  w-full h-[124px] lg:h-full p-2 lg:p-0'>
+            <div className='flex flex-col lg:m-6 lg:w-[28%]  w-full h-[124px] lg:h-full p-2 lg:p-0 mt[70px]'>
                 <div className='flex flex-col h-full'>
                     <h2 className='rounded-lg text-red-500 text-center pb-4 border-red-400 border-b-2 mb-4 text-xl font-semibold hidden lg:block'>JOUEURS</h2>
                     <ul className='h-full overflow-y-auto lg:overflow-hidden scrollbar flex flex-row lg:flex-col'>

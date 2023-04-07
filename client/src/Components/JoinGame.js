@@ -28,7 +28,6 @@ const JoinGame = () => {
     const joinRoom = () => {
         sessionStorage.setItem('name', playerUsername);
         sessionStorage.setItem('id', paramId);
-        sessionStorage.setItem('isHosting', '0');
         let isHosting = false;
         userUpdate(playerUsername, playerAvatarIndex, paramId, isHosting)
         socket.emit('joinRoom', { id: paramId, player: playerUsername, playerAvatarIndex: playerAvatarIndex });
@@ -55,8 +54,8 @@ const JoinGame = () => {
             console.log(data, 'response');
             await setParamId(data.gameID);
             sessionStorage.setItem('id', data.gameID);
-            sessionStorage.setItem('isHosting', '1');
             userUpdate(playerUsername, playerAvatarIndex, data.gameID, isHosting)
+
         });
 
         await navigate("/room", { state: paramId });

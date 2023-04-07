@@ -72,7 +72,7 @@ class Room {
 
     async selectGame(data) {
         const { socket } = this;
-        socket.to(data.roomID).emit('selectGame', data);
+        socket.to(data.roomID).emit('selectGame', data.selectedGameId);
         console.log(data);
     }
 
