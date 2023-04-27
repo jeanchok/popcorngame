@@ -34,7 +34,7 @@ const Room = () => {
     const [gameId, setGameId] = useState(user.gameId);
 
     let countDownSound = new Audio("/sounds/coutdown-start.mp3")
-    let countDownSoundOgg = new Audio("/sounds/coutdown-start.ogg")
+    //let countDownSoundOgg = new Audio("/sounds/coutdown-start.ogg")
 
     useEffect(() => {
         playerRef.current = players
@@ -65,7 +65,6 @@ const Room = () => {
     useEffect(() => {
         const newPrivateRoom = (data) => {
             setGameLink(`${window.location.protocol}//${window.location.host}/?id=${data.gameID}`);
-            console.log('HERRE', data.gameID, user)
             const newPlayerArray = [...playerRef.current];
             newPlayerArray.push({ name: data.userName, score: 0, playerId: data.id, playerAvatarIndex: data.playerAvatarIndex });
             setPlayers(newPlayerArray);
@@ -116,7 +115,6 @@ const Room = () => {
 
     socket.on('selectGame', (selectedGameId) => {
         setSelectedGameId(selectedGameId)
-        console.log(selectedGameId)
     })
 
     useEffect(() => {
@@ -137,7 +135,6 @@ const Room = () => {
         if (selectedGameId === 1) {
             if (!socket.sentMydata) {
                 socket.emit('startCountdown', { roomID: user.gameId });
-                console.log('LAUCH')
                 socket.sentMydata = true;
             }
         }
@@ -149,13 +146,11 @@ const Room = () => {
     useEffect(() => {
         const startGame = async () => {
             if (selectedGameId === 1 && playerRef.current.length > 0) {
-                console.log('startGame', user.gameId, userRef.current)
                 socket.emit('startPicass', { id: userRef.current.gameId, players: playerRef.current });
             }
         }
 
         const startCountdown = async () => {
-            console.log('startCountdown')
             setStartSound(true);
             await setStartCountdownOverlay(true);
             setTimeout(() => {
@@ -175,7 +170,6 @@ const Room = () => {
 
     useEffect(() => {
         const startPicass = async (data) => {
-            console.log('startPicass', data)
             navigate("/picass", { state: playersListRef.current });
         }
         socket.on('startPicass', startPicass)
@@ -196,7 +190,6 @@ const Room = () => {
                 <div className='bg-black/25 w-screen h-2/4 -z-10 absolute top-0'></div>
                 <section className='max-w-screen-xl bg-center justify-center lg:w-[67%] lg:h-[50%] w-[90%] h-[60%] mt-9o
                  flex content-center z-10 relative fade-in  backdrop-blur'>
-
                     <div className='absolute -top-[68px] left-[15%]'>
                         <BackButton to={"/"} roomID={null} />
                     </div>
@@ -204,21 +197,15 @@ const Room = () => {
                         <SoundButton />
                     </div>
                     <div className=' m-auto min-h-1/2 border-white/20 border bg-slate-50 bg-opacity-10 h-full flex rounded-md flex-col lg:flex-row w-full'>
-
                         <PlayerList playersList={playersList} />
-
-
                         <div className='bg-transparent h-full lg:w-[80%] w-full'>
                             <h2 className='text-white border-white/20 border text-center flex items-center justify-center lg:block lg:pb-4 lg:pt-4 border-red-400 border-l-2 text-xl font-semibold h-[15%]'>CHOISIR LE JEU</h2>
                             <div className='flex flex-col bg-neutral-900 h-full lg:h-[85%] w-full border-white/20 border gap-2 rounded-br-lg items-center'>
                                 <div className='lg:w-[80%] flex flex-col h-full justify-between w-full'>
-
-
                                     <div className='lg:h-full h-[75%] flex flex-row justify-between p-6 mb-0 gap-4 overflow-x-auto w-full'>
                                         <>
                                             {gamesList.map((game) => {
                                                 const isSelected = game.id === selectedGameId;
-
                                                 return (
                                                     <GameButton
                                                         key={game.id}
@@ -230,7 +217,6 @@ const Room = () => {
                                         </>
                                     </div>
                                     <div className='flex w-full lg:m-auto justify-around lg:mt-10 lg:mb-10 relative lg:p-0 pb-5'>
-
                                         <button className='rounded-md bg-white hover:bg-red-500 text-red-500 font-semibold hover:text-white py-2 px-4 hover:border-transparent mt-4 w-1/3 transition relative flex justify-center' type='submit' value='Démarrer' onClick={copyLink}>INVITER
                                             {
                                                 toggleBubleCopyLink ?

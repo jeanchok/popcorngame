@@ -1,8 +1,6 @@
 import React from 'react';
 import { useSoundOn, useSoundUpdate } from '.././context/SoundContext';
 
-
-
 const SoundButton = () => {
     const soundOn = useSoundOn();
     const toggleSoundOn = useSoundUpdate();

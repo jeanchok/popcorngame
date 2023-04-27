@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useSocket } from "../context/socket";
-import { colors1, colors2 } from "../constant/const";
+import { colors1, colors2, lineWidths } from "../constant/const";
 import { useUser } from '.././context/user';
 
 const Canva = ({ playersList, givenHint }) => {
@@ -22,13 +22,11 @@ const Canva = ({ playersList, givenHint }) => {
 
     useEffect(() => {
         setRoomId(user.gameId);
-        console.log('useEffectRoomId: ' + RoomId);
     }, [user.gameId]);
 
     useEffect(() => {
         setWordToGuess(givenHint)
     }, [givenHint]);
-
 
     useEffect(() => {
         // --------------- getContext() method returns a drawing context on the canvas-----
@@ -160,11 +158,8 @@ const Canva = ({ playersList, givenHint }) => {
         socket.on('drawing', onDrawingEvent);
     }, [socket]);
 
-
-
     useEffect(() => {
         socket.on('changeColor', async (data) => {
-            console.log('changeColor')
             const canvas = canvasRef.current;
             const context = canvas.getContext("2d");
             context.strokeStyle = await data.color;
@@ -172,7 +167,6 @@ const Canva = ({ playersList, givenHint }) => {
         })
 
         socket.on('changeLineWidth', async (data) => {
-            console.log('changeLineWidth')
             const canvas = canvasRef.current;
             const context = canvas.getContext("2d");
             context.lineWidth = await data.size;
@@ -190,7 +184,6 @@ const Canva = ({ playersList, givenHint }) => {
             await setDrawerisChoosing(true);
             setDrawer(drawer.name);
         });
-
     }, [socket]);
 
     useEffect(() => {
@@ -199,7 +192,6 @@ const Canva = ({ playersList, givenHint }) => {
             await setDrawerisChoosing(false);
             await setIsChoosingWord(true);
             setWordsChoice([word1, word2, word3]);
-            console.log('chooseWordOn')
         }
         socket.on('chooseWord', chooseWord);
 
@@ -222,7 +214,6 @@ const Canva = ({ playersList, givenHint }) => {
     useEffect(() => {
         const startTimer = () => {
             setDrawerisChoosing(false);
-            console.log('startTimer')
         }
         socket.on('startTimer', startTimer)
 
@@ -235,7 +226,6 @@ const Canva = ({ playersList, givenHint }) => {
     const chooseWord = async (words) => {
         await setIsChoosingWord(false);
         await setWordToGuess(words);
-        console.log('chooseWord', RoomId)
         socket.emit('chooseWord', { words, RoomId });
     };
 
@@ -261,7 +251,6 @@ const Canva = ({ playersList, givenHint }) => {
     };
 
     const capitalizeFirstLetter = (string) => {
-        console.log(string, 'capitalizeFirstLetter', string.charAt(0).toUpperCase() + string.slice(1))
         return string.charAt(0).toUpperCase() + string.slice(1);
     }
 
@@ -298,12 +287,9 @@ const Canva = ({ playersList, givenHint }) => {
                         drawerisChoosing ?
                             <div className={"flex align-center justify-center h-[250px] w-[450px] rounded-xl bg-neutral-800 z-10 absolute "}>
                                 <div className="flex flex-col  align-center justify-center  gap-y-4 p-4">
-
                                     <div className="flex items-center">
-
                                         <p className="ml-2 py-2 px-4 text-white"><strong>{drawer}</strong> est en train de choisir une expression.</p>
                                     </div>
-
                                 </div>
                             </div>
                             :
@@ -351,26 +337,16 @@ const Canva = ({ playersList, givenHint }) => {
                                 <img className='w-full h-full' src=".\img\icons8-eraser-64.png" alt="logo gomme" />
                             </button>
                         </div>
-                        <div className="flex items-center justify-center">
-                            <button onClick={() => changeLineWidth(35)} className="m-1 w-8 h-8 flex items-center justify-center">
-                                <div className="rounded-full bg-black w-7 h-7"></div>
-                            </button>
-                        </div>
-                        <div className="flex items-center justify-center">
-                            <button onClick={() => changeLineWidth(25)} className=" m-1 w-8 h-8 flex items-center justify-center">
-                                <div className="rounded-full bg-black w-6 h-6"></div>
-                            </button>
-                        </div>
-                        <div className="flex items-center justify-center">
-                            <button onClick={() => changeLineWidth(15)} className=" m-1 w-8 h-8 flex items-center justify-center">
-                                <div className="rounded-full bg-black w-4 h-4"></div>
-                            </button>
-                        </div>
-                        <div className="flex items-center justify-center">
-                            <button onClick={() => changeLineWidth(5)} className=" m-1 w-8 h-8 flex items-center justify-center">
-                                <div className="rounded-full bg-black w-2 h-2"></div>
-                            </button>
-                        </div>
+                        {lineWidths.map((item) => (
+                            <div key={item.lineWidth} className="flex items-center justify-center">
+                                <button
+                                    onClick={() => changeLineWidth(item.lineWidth)}
+                                    className="m-1 w-8 h-8 flex items-center justify-center"
+                                >
+                                    <div className={`rounded-full bg-black ${item.circleSize}`}></div>
+                                </button>
+                            </div>
+                        ))}
                         <div className="flex items-center justify-center">
                             <button className=" m-1 w-8" onClick={() => clearCanvas()}>
                                 <img className='w-full h-full' src=".\img\icons8-bin-60.png" alt="logo poubelle" />

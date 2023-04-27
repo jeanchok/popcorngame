@@ -1,7 +1,6 @@
 import React from 'react';
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useSocket } from "../context/socket";
-import io from "socket.io-client";
 import { useUser } from '.././context/user';
 
 const BackButton = ({ to, roomID }) => {
@@ -24,16 +23,11 @@ const BackButton = ({ to, roomID }) => {
             //navigate(to, { state: state });
             navigate(to);
         }
-
     }
 
     const backTo = async (to) => {
-        //await reconnect();
-        //navigate(to);
         window.location.href = '/';
     }
-
-
 
     return (
         <>
@@ -59,15 +53,6 @@ const BackButton = ({ to, roomID }) => {
                         </div>
                     </button>
             }
-            {/* <button onClick={() => { backTo(to) }}>
-                <div className='bg-white flex p-2 mb-4 rounded group hover:bg-black hover:border border  transition'>
-                    <img src="/img/angle-de-la-fleche-pointant-vers-la-gauche.png" className='w-8 pr-2 group-hover:hidden transition' alt="flêche" />
-                    <img src="/img/angle-de-la-fleche-pointant-vers-la-gauche-white.png" className='w-8 pr-2 hidden transition group-hover:block' alt="flêche" />
-                    <nav className='text-xl pr-2 font-bold group-hover:text-white transition md:block hidden'>
-                        ACCUEIL
-                    </nav>
-                </div>
-            </button> */}
         </>
     );
 };

@@ -1,26 +1,15 @@
 import React, { useState, useEffect } from 'react';
-//import { socket } from "../context/socket";
 import { useSocket } from "../context/socket";
 import { useSoundOn } from '.././context/SoundContext';
 
 const Timer = ({ updateGivenHint }) => {
     const [socket] = useSocket();
-
-
-    //const [startTimer, setStartTimer] = useState(false);
-
     const [hints, setHints] = useState([]);
     const [time, setTime] = useState(0);
     const [seconds, setSeconds] = useState(0);
-    //const [seconds, setSeconds] = useState(time / 1000);
     const [switchColorTimer, setSwitchColorTimer] = useState(false);
     const soundOn = useSoundOn();
     let secLeft = new Audio("/sounds/5secLeft.mp3")
-
-    socket.on('clearCanvas', () => {
-        //setSeconds(0);
-        console.log('clearCanvas')
-    })
 
     useEffect(() => {
         socket.on('startTimer', ({ time }) => {
@@ -30,7 +19,7 @@ const Timer = ({ updateGivenHint }) => {
     }, [socket]);
 
     useEffect(() => {
-        socket.on('hints', (data) => { setHints(data); console.log('hintshintshints', data); });
+        socket.on('hints', (data) => { setHints(data) });
     }, [socket]);
 
     if (hints[0] && seconds === hints[0].displayTime) {
@@ -38,7 +27,6 @@ const Timer = ({ updateGivenHint }) => {
         updateGivenHint(hints[0])
         hintsNewArr.shift();
         setHints(hintsNewArr);
-        console.log(hints[0], 'hints');
     }
 
     useEffect(() => {
@@ -49,13 +37,9 @@ const Timer = ({ updateGivenHint }) => {
         return () => clearInterval(interval);
     }, []);
 
-
-    // variable to store our intervalID
-
     let nIntervId;
 
     function changeColor() {
-        // check if an interval has already been set up
         if (!nIntervId) {
             nIntervId = setInterval(flashText, 1000);
         }
@@ -65,7 +49,6 @@ const Timer = ({ updateGivenHint }) => {
         switchColorTimer ? setSwitchColorTimer(false) : setSwitchColorTimer(true)
     }
 
-    // useEffect(() => {
     if (seconds < 6) {
         changeColor();
     }
@@ -76,12 +59,9 @@ const Timer = ({ updateGivenHint }) => {
 
     if (seconds === 1) {
         clearInterval(nIntervId);
-        // release our intervalID from the variable
         nIntervId = null;
         secLeft.remove();
     }
-    // }, []);
-
 
     return (
         <>

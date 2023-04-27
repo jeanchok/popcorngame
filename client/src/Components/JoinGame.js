@@ -2,20 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { useSocket } from "../context/socket";
 import { useNavigate } from "react-router-dom";
 import { avatars } from "../constant/const.js"
-import { useUser, useUserUpdate } from '.././context/user';
-import io from "socket.io-client";
+import { useUserUpdate } from '.././context/user';
 
 const JoinGame = () => {
     const [socket] = useSocket();
-    //let socket = io('https://popcornback.jeanchoquet.fr/');
     const [playerUsername, setPlayerUsername] = useState("");
     const [playerAvatarIndex, setPlayerAvatarIndex] = useState(0);
     const [response, setResponse] = useState("");
     const [paramId, setParamId] = useState("");
     const navigate = useNavigate();
-    const user = useUser();
     const userUpdate = useUserUpdate();
-
 
     useEffect(() => {
         let params = new URLSearchParams(window.location.search);
@@ -26,8 +22,6 @@ const JoinGame = () => {
     }, []);
 
     const joinRoom = () => {
-        sessionStorage.setItem('name', playerUsername);
-        sessionStorage.setItem('id', paramId);
         let isHosting = false;
         userUpdate(playerUsername, playerAvatarIndex, paramId, isHosting)
         socket.emit('joinRoom', { id: paramId, player: playerUsername, playerAvatarIndex: playerAvatarIndex });
@@ -45,19 +39,14 @@ const JoinGame = () => {
     }
 
     const createRoom = async () => {
-        await sessionStorage.setItem('name', playerUsername);
         let isHosting = true;
-
         socket.emit('newPrivateRoom', { playerUsername: playerUsername, playerAvatarIndex: playerAvatarIndex });
         await socket.on('newPrivateRoom', async (data) => {
             setResponse(data);
-            console.log(data, 'response');
             await setParamId(data.gameID);
             sessionStorage.setItem('id', data.gameID);
             userUpdate(playerUsername, playerAvatarIndex, data.gameID, isHosting)
-
         });
-
         await navigate("/room", { state: paramId });
     }
 

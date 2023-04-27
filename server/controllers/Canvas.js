@@ -6,7 +6,6 @@ class Canvas {
 
     broadcastDrawing(data) {
         const { socket } = this;
-        //socket.broadcast.emit('drawing', data);
         socket.to(data.RoomId).emit('drawing', data);
     }
 
@@ -43,4 +42,3 @@ class Canvas {
 }
 
 module.exports = Canvas;
-//exports.default = Canvas;

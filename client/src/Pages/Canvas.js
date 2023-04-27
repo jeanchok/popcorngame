@@ -21,11 +21,8 @@ export function Canvas() {
     const [socket] = useSocket();
     const { state } = useLocation();
     const [playersList, setPlayersList] = useState(state);
-    const [playersListUpdatedScore, setPlayersListUpdatedScore] = useState();
     const [time, setTime] = useState(0);
-    const [endTime, setEndTime] = useState(true);
     const [endGame, setEndGame] = useState(false);
-    const [score, setScore] = useState();
     const [winnerName, setWinnerName] = useState("");
     const [givenHint, setGivenHint] = useState("");
     const soundOn = useSoundOn();
@@ -37,18 +34,11 @@ export function Canvas() {
     const user = useUser();
     const [gameId, setGameId] = useState(user.gameId);
     const [scaleRatio, setScaleRatio] = useState(null);
-
-    const [sectionWidth, setSectionWidth] = useState('');
-    const [sectionHeight, setSectionHeight] = useState('');
-
-    // Timer const
+    // const [sectionWidth, setSectionWidth] = useState('');
+    // const [sectionHeight, setSectionHeight] = useState('');
     const [seconds, setSeconds] = useState(null);
-    const [switchColorTimer, setSwitchColorTimer] = useState(false);
-    let secLeft = new Audio("/sounds/5secLeft.mp3")
+    //let secLeft = new Audio("/sounds/5secLeft.mp3")
     const secondsRef = useRef(null);
-
-    const [hints, setHints] = useState([]);
-
 
     useEffect(() => {
         secondsRef.current = seconds;
@@ -56,7 +46,6 @@ export function Canvas() {
 
     useEffect(() => {
         setGameId(user.gameId);
-        console.log('useEffectRoomId: ' + user.gameId);
     }, [user.gameId]);
 
     if (startSoundEndGame && soundOn) {
@@ -65,14 +54,11 @@ export function Canvas() {
 
     useEffect(() => {
         socket.on('startTimer', ({ time }) => {
-            setEndTime(false);
             setTime(time);
-
             setStartSoundRoundEnd(true);
         })
 
         socket.on('disconnection', (playerId) => {
-            console.log('players', playerId)
             setPlayersList((current) =>
                 current.filter((player) => player.playerId !== playerId)
             );
@@ -111,20 +97,17 @@ export function Canvas() {
             await setStartSoundRoundEnd(false);
             setStartSoundEndGame(true);
         })
-
     }, [socket]);
 
     useEffect(() => {
         if (time > 0) {
             setSeconds(time / 1000);
         }
-        console.log('time', time)
     }, [time]);
 
 
     const updateGivenHint = (hint) => {
         setGivenHint(hint.hint);
-        console.log(hints, 'Hints');
     }
 
     const handleBeforeUnload = (e) => {
@@ -160,23 +143,14 @@ export function Canvas() {
     // }, []);
 
     return (
-
         <>
-
             <main className='flex flex-col items-center lg:gap-2 h-full m-auto relative'>
                 <div className="lg:block hidden">
                     <Header />
                 </div>
                 <img className='object-cover absolute h-screen w-screen bg-object bg-cover -z-10 top-0' src=".\img\fondpop.png" alt="popcorn rouge fond" />
                 <div className='bg-black/25 w-screen h-2/4 -z-10 absolute top-0'></div>
-                {/* {
-                    time > 0 ?
-                        <Timer time={time} updateGivenHint={updateGivenHint} /> : <div className=' justify-center mb-2 mt-5 h-[41px] py-1 px-2 text-xl md:flex hidden'></div>
-                } */}
-
                 <Timer updateGivenHint={updateGivenHint} />
-
-
                 {
                     endGame ?
                         <ResultsGameOverlay winnerName={winnerName} playersList={playersList} roomID={gameId} />
@@ -185,20 +159,15 @@ export function Canvas() {
                  flex content-center z-10 relative fade-in  backdrop-blur`}
                             style={(window.innerWidth > 768) ? { transform: `scale(${scaleRatio})` } : null}
                         >
-
                             <div className='absolute -top-[68px] left-[2%] lg:block hidden'>
                                 <BackButton to={"/"} roomID={null} />
                             </div>
                             <div className="w-20 absolute right-[15%] -top-[72px] lg:block hidden">
                                 <SoundButton />
                             </div>
-                            <div className=' min-h-[70%] border-white/20 border bg-slate-50 bg-opacity-10 flex rounded-md backdrop-blur-sm lg:w-full w-full flex-col lg:flex-row mt[70px]'>
-
+                            <div className=' min-h-[70%] border-white/20 border bg-slate-50 bg-opacity-10 flex rounded-md backdrop-blur-sm lg:w-full w-full flex-col lg:flex-row lg:pt-0 pt-[38px]'>
                                 <PlayerList playersList={playersList} />
-
-
                                 <Canva playersList={playersList} givenHint={givenHint} />
-
                                 <Chat />
                             </div>
                         </section>
@@ -206,7 +175,6 @@ export function Canvas() {
                 <Paricules />
             </main >
         </>
-
     );
 }
 

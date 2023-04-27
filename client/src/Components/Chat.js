@@ -1,62 +1,36 @@
 import React, { useState, useEffect, useRef } from 'react';
-//import { socket } from "../context / socket";
 import { useSocket } from "../context/socket";
-import { useUser, useUserUpdate } from '.././context/user';
+import { useUser } from '.././context/user';
 
 const Chat = () => {
     const [socket] = useSocket();
-    //const [roomId, setRoomId] = useState("");
-    // Messages States
     const [message, setMessage] = useState("");
     const [round, setRound] = useState(1);
     const [messageReceived, setMessageReceived] = useState([]);
     const playerUsername = sessionStorage.getItem('name');
-    //const roomId = sessionStorage.getItem('id');
     const bottomRef = useRef(null);
     const user = useUser();
     const [roomId, setRoomId] = useState(user.gameId);
 
     useEffect(() => {
         setRoomId(user.gameId);
-        console.log('useEffectRoomId: ' + user.gameId);
     }, [user.gameId]);
-
 
     const sendMessage = (e) => {
         e.preventDefault();
-        console.log('sendMessage: ' + roomId);
         socket.emit("message", { message, roomId, playerUsername });
         setMessage('');
     };
 
     socket.on('closeGuess', (data) => {
-        console.log('closeGuess');
         setMessageReceived([...messageReceived, { playerUsername: "PopCorn", message: "Pas loin !" }]);
     });
 
-    // useEffect(() => {
-    //     socket.on('startPicass', async (data) => {
-    //         navigate("/picass", { state: playersList });
-    //         console.log('startCountdownYOOO')
-    //     })
-    //     return () => {
-    //         socket.off("startPicass");
-    //     };
-    // }, []);
-
-    // socket.on('correctGuess', async (data) => {
-    //     console.log('correctGuess');
-    //     let message = data.message;
-    //     setMessageReceived([...messageReceived, { playerUsername: "PopCorn", message }]);
-    // });
-
     useEffect(() => {
         const correctGuess = async (data) => {
-            console.log('correctGuess');
             let message = data.message;
             setMessageReceived([...messageReceived, { playerUsername: "PopCorn", message }]);
         }
-
         socket.on('correctGuess', correctGuess);
 
         return () => {
@@ -67,23 +41,14 @@ const Chat = () => {
 
     useEffect(() => {
         const lastWord = ({ word }) => {
-            console.log('lastWord');
             setMessageReceived([...messageReceived, { playerUsername: "PopCorn", message: `L'expression c'était "${word}", si t'as pas trouvé ratio` }]);
         }
-
         socket.on('lastWord', lastWord);
 
         return () => {
             socket.off("lastWord", lastWord);
         };
     }, [socket]);
-
-
-    // socket.on('lastWord', ({ word }) => {
-    //     console.log('lastWord');
-    //     setMessageReceived([{ playerUsername: "PopCorn", message: `L'expression c'était "${word}", si t'as pas trouvé ratio` }]);
-    // });
-
 
     socket.on("message", (data) => {
         if (!data.correctGuess && data.playerUsername) {
@@ -106,12 +71,10 @@ const Chat = () => {
 
 
     return (
-        <div className='flex flex-col lg:m-4 lg:w-1/3 w-full p-8 lg:p-0 lg:h-auto h-full overflow-y-auto'>
+        <div className='flex flex-col lg:m-4 lg:w-1/3 w-full p-8 lg:p-0 lg:h-auto h-[70%] pt-[10px] overflow-y-auto'>
             <div className='flex flex-col h-full'>
                 <h2 className='text-red-500 rounded-lg  text-center pb-4 border-red-400 border-b-2 mb-4 text-xl font-semibold lg:block hidden lg:m-2'>CHAT</h2>
                 <ul className='overflow-y-auto scrollbar grow'>
-
-
                     {messageReceived.map((messageReceived, index) =>
                         (messageReceived.playerUsername === playerUsername) ?
                             <li className='flex justify-end mr-2' key={index}>
@@ -141,7 +104,6 @@ const Chat = () => {
                     <button type='submit' className='rounded-md mt-4 lg:w-auto w-full border-2 py-2 px-4 text-white border-white hover:bg-red-500 hover:border-transparent transition'>ENVOYER</button>
                 </form>
             </div>
-
         </div>
     );
 };

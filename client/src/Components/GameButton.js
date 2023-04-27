@@ -1,7 +1,6 @@
 import React from 'react';
 
 const GameButton = ({ game, selected, onClick }) => (
-
     <div className="wrapper aspect-[3/4] h-full group">
         <button
             onClick={selected ? null : onClick}

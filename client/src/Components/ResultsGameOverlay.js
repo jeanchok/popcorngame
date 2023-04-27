@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-//import PlayerList from "../Components/PlayerList";
 import BackButton from "../Components/BackButton";
 import { avatars } from "../constant/const.js"
 import { useSocket } from "../context/socket";
@@ -8,31 +7,21 @@ import { useUser, useUserUpdate } from '.././context/user';
 const ResultsGameOverlay = ({ winnerName, playersList, roomID }) => {
     const userUpdate = useUserUpdate();
     const user = useUser();
-
     const [socket] = useSocket();
     const [hostRestartedToRoom, setHostRestartedToRoom] = useState(false);
-
     let isHosting = sessionStorage.getItem('isHosting');
 
     useEffect(() => {
         const restartToRoom = (data) => {
-            console.log("restartToRoomResult", 'hosting', user.isHosting);
             setHostRestartedToRoom(true);
             userUpdate(user.name, user.playerAvatarIndex, data.newRoomID, user.isHosting);
-            //socket.emit('joinRoom', { id: data.newRoomID, player: user.name, playerAvatarIndex: user.playerAvatarIndex });
         }
-
         socket.on('restartToRoom', restartToRoom)
 
         return () => {
             socket.off("restartToRoom", restartToRoom);
         };
     }, [socket]);
-
-    // socket.on('restartToRoom', () => {
-    //     console.log("restartToRoomResult");
-    //     setHostRestartedToRoom(true);
-    // })
 
     return (
         <div className='bg-black/80 fixed z-20 h-full w-full flex items-center justify-center flex-col gap-2'>
@@ -46,10 +35,9 @@ const ResultsGameOverlay = ({ winnerName, playersList, roomID }) => {
                         :
                         null
             }
-
             <h2 className='text-4xl font-bold text-white mb-8 border-b-2 border-solid pb-3'>SCORE FINAL</h2>
             <h3 className='text-3xl text-white mb-8'>
-                The winner is... <strong>{winnerName}</strong> !
+                The gagnant is... <strong>{winnerName}</strong> !
             </h3>
             {playersList.map((player, index) =>
                 <div key={index} className='ml-6 mb-2 flex w-9/10 h-14 bg-transparent border-white border-b-1'>

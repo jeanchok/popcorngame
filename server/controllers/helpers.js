@@ -1,6 +1,5 @@
 /* global MAX_POINTS, round, games */
 
-
 const { readFileSync } = require('fs');
 const Chance = require('chance');
 const GraphemeSplitter = require('grapheme-splitter');
@@ -58,15 +57,6 @@ function wait(roomID, drawer, ms, games) {
 }
 
 function get3Words(roomID) {
-    // const { probability: p } = games[roomID];
-    // const language = games[roomID].language.toLowerCase();
-    // if (games[roomID].customWords.length < 3) return chance.pickset(words[language], 3);
-    // const pickedWords = new Set();
-    // while (pickedWords.size !== 3) {
-    //     const wordSet = chance.weighted([words[language], games[roomID].customWords], [1 - p, p]);
-    //     pickedWords.add(chance.pickone(wordSet));
-    // }
-    // return Array.from(pickedWords);
     const pickedWords = [];
     while (pickedWords.length !== 3) {
         const randIndex = Math.floor(Math.random() * words.fr.length);
@@ -76,15 +66,9 @@ function get3Words(roomID) {
     return Array.from(pickedWords);
 }
 
-// function getPlayersCount(roomID) {
-//     console.log("getPlayersCount", games[roomID]);
-//     //return Object.keys(games[roomID]).filter((key) => key.length === 20).length;
-// }
-
 module.exports = {
     getScore,
     getHints,
     wait,
     get3Words,
-    // getPlayersCount,
 };

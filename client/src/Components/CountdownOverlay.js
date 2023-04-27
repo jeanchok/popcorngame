@@ -13,7 +13,6 @@ const CountdownOverlay = () => {
                 {zeroPad(seconds, 1)}
             </span>
         </div>
-
     );
 
     return (
@@ -22,7 +21,6 @@ const CountdownOverlay = () => {
                 <Completionist />
             </Countdown>
         </div>
-
     );
 };
 
