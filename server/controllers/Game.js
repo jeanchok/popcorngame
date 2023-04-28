@@ -146,6 +146,7 @@ class Game {
                 });
                 if (games[data.roomId].totalGuesses === roomSize - 1) {
                     global.round.emit('everybodyGuessed', { data: data.roomId });
+                    //io.to(data.roomId).emit('everybodyGuessed');
                 }
             }
             socket.hasGuessed = true;

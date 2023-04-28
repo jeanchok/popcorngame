@@ -7,15 +7,48 @@ const Timer = ({ updateGivenHint }) => {
     const [hints, setHints] = useState([]);
     const [time, setTime] = useState(0);
     const [seconds, setSeconds] = useState(0);
-    const [switchColorTimer, setSwitchColorTimer] = useState(false);
+    const [gamelaunched, setGamelaunched] = useState(false)
+    //const [switchColorTimer, setSwitchColorTimer] = useState(false);
     const soundOn = useSoundOn();
-    let secLeft = new Audio("/sounds/5secLeft.mp3")
+
+    useEffect(() => {
+        const secLeft = new Audio("/sounds/5secLeft.mp3");
+        if (seconds === 5 && soundOn) {
+            secLeft.play();
+        }
+        return () => {
+            secLeft.remove();
+        };
+    }, [seconds === 5]);
+
+    useEffect(() => {
+        const roundEndSound = new Audio("/sounds/roundEnd.mp3")
+        if (time === 0 && soundOn && gamelaunched) {
+            roundEndSound.play();
+        }
+        return () => {
+            roundEndSound.remove();
+        };
+    }, [time === 0]);
 
     useEffect(() => {
         socket.on('startTimer', ({ time }) => {
             setTime(time)
             setSeconds(time / 1000);
+            setGamelaunched(true)
         })
+
+        // set timer to zero when...
+        socket.on('lastWord', () => {
+            setTime(0);
+        });
+        socket.on('choosing', () => {
+            setTime(0);
+        });
+        socket.on('endGame', () => {
+            setTime(0);
+            setSeconds(0);
+        });
     }, [socket]);
 
     useEffect(() => {
@@ -37,31 +70,49 @@ const Timer = ({ updateGivenHint }) => {
         return () => clearInterval(interval);
     }, []);
 
-    let nIntervId;
+    // let nIntervId;
 
-    function changeColor() {
-        if (!nIntervId) {
-            nIntervId = setInterval(flashText, 1000);
-        }
-    }
+    // const changeColor = () => {
+    //     if (!nIntervId) {
+    //         nIntervId = setInterval(flashText, 1000);
+    //     }
+    // }
+    // const changeColor = () => {
+    //     if (!nIntervId && seconds < 6) {
+    //         nIntervId = setInterval(flashText, 1000);
+    //     }
+    //     //  if (seconds === 0) {
+    //     //     clearInterval(nIntervId);
+    //     //     nIntervId = null;
+    //     // }
+    // };
 
-    function flashText() {
-        switchColorTimer ? setSwitchColorTimer(false) : setSwitchColorTimer(true)
-    }
+    // const flashText = () => {
+    //     switchColorTimer ? setSwitchColorTimer(false) : setSwitchColorTimer(true)
+    // }
 
-    if (seconds < 6) {
-        changeColor();
-    }
+    // useEffect(() => {
+    //     changeColor();
+    // }, [seconds < 6]);
 
-    if (seconds === 5 && soundOn) {
-        secLeft.play()
-    }
+    // if (seconds === 1) {
+    //     clearInterval(nIntervId);
+    //     nIntervId = null;
+    // }
 
-    if (seconds === 1) {
-        clearInterval(nIntervId);
-        nIntervId = null;
-        secLeft.remove();
-    }
+    // if (seconds < 6) {
+    //     changeColor();
+    // }
+
+    // if (seconds === 5 && soundOn) {
+    //     secLeft.play()
+    // }
+
+    // if (seconds === 1) {
+    //     clearInterval(nIntervId);
+    //     nIntervId = null;
+    //     //        secLeft.remove();
+    // }
 
     return (
         <>
@@ -69,10 +120,7 @@ const Timer = ({ updateGivenHint }) => {
                 time > 0 ?
                     (seconds >= 0) ?
                         <div className={
-                            switchColorTimer ?
-                                'flex justify-center mb-2 mt-5 border border-white font-bold text-white py-1 px-2 text-xl z-20 bg-zinc-800 md:relative md:top-0 md:left-0 absolute top-[54%] left-[2%]'
-                                :
-                                'flex justify-center mb-2 mt-5 border border-black font-bold text-black py-1 px-2 text-xl z-20 bg-white md:relative md:top-0 md:left-0 absolute top-[54%] left-[2%]'
+                            'flex justify-center mb-2 mt-5 border border-white font-bold text-white py-1 px-2 text-xl z-20 bg-zinc-800 md:relative md:top-0 md:left-0 absolute top-[65%] left-[2%]'
                         }>
                             {seconds}
                         </div>

@@ -1,10 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
-//import { useCanvas } from "../context/CanvasContext";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
 import Header from "../Components/Header";
-// import { socket } from "../context/socket";
 import { useSocket } from "../context/socket";
-
 import Chat from "../Components/Chat";
 import PlayerList from "../Components/PlayerList";
 import Canva from "../Components/Canva";
@@ -29,15 +26,10 @@ export function Canvas() {
     const [startSoundRoundStart, setStartSoundRoundStart] = useState(false);
     const [startSoundRoundEnd, setStartSoundRoundEnd] = useState(false);
     const [startSoundEndGame, setStartSoundEndGame] = useState(false);
-    let roundEndSound = new Audio("/sounds/roundEnd.mp3")
-    let endGameSound = new Audio("/sounds/finish.mp3")
     const user = useUser();
     const [gameId, setGameId] = useState(user.gameId);
     const [scaleRatio, setScaleRatio] = useState(null);
-    // const [sectionWidth, setSectionWidth] = useState('');
-    // const [sectionHeight, setSectionHeight] = useState('');
     const [seconds, setSeconds] = useState(null);
-    //let secLeft = new Audio("/sounds/5secLeft.mp3")
     const secondsRef = useRef(null);
 
     useEffect(() => {
@@ -48,14 +40,29 @@ export function Canvas() {
         setGameId(user.gameId);
     }, [user.gameId]);
 
-    if (startSoundEndGame && soundOn) {
-        endGameSound.play();
-    }
+
+    useEffect(() => {
+        const endGameSound = new Audio("/sounds/finish.mp3")
+        if (startSoundEndGame && soundOn) {
+            endGameSound.play()
+        }
+        return () => {
+            endGameSound.remove();
+        };
+    }, [startSoundEndGame && soundOn]);
+
+    useEffect(() => {
+        const roundStartSound = new Audio("/sounds/roundStart.mp3")
+        if (startSoundRoundStart && soundOn) {
+            roundStartSound.play()
+            setStartSoundRoundStart(false)
+        }
+    }, [startSoundRoundStart]);
 
     useEffect(() => {
         socket.on('startTimer', ({ time }) => {
             setTime(time);
-            setStartSoundRoundEnd(true);
+            setStartSoundRoundStart(true);
         })
 
         socket.on('disconnection', (playerId) => {
@@ -105,42 +112,9 @@ export function Canvas() {
         }
     }, [time]);
 
-
     const updateGivenHint = (hint) => {
         setGivenHint(hint.hint);
     }
-
-    const handleBeforeUnload = (e) => {
-        e.preventDefault();
-        e.returnValue = 'Voulez-vous vraiment quitter cette page?';
-    };
-
-    useEffect(() => {
-        window.addEventListener('beforeunload', handleBeforeUnload);
-
-        return () => {
-            window.removeEventListener('beforeunload', handleBeforeUnload);
-        };
-    }, []);
-
-    // const updateSize = () => {
-    //     if (window.innerWidth > 1024) {
-    //         let ratio = window.innerWidth * 0.8 / 1500
-    //         if (ratio > 1.11) {
-    //             setScaleRatio(1.11)
-    //         } else {
-    //             setScaleRatio(window.innerWidth * 0.8 / 1500)
-    //         }
-
-    //     } else {
-    //         setScaleRatio(null)
-    //     }
-    // }
-
-    // useEffect(() => {
-    //     updateSize();
-    //     window.addEventListener("resize", updateSize);
-    // }, []);
 
     return (
         <>
@@ -151,26 +125,30 @@ export function Canvas() {
                 <img className='object-cover absolute h-screen w-screen bg-object bg-cover -z-10 top-0' src=".\img\fondpop.png" alt="popcorn rouge fond" />
                 <div className='bg-black/25 w-screen h-2/4 -z-10 absolute top-0'></div>
                 <Timer updateGivenHint={updateGivenHint} />
+
                 {
                     endGame ?
                         <ResultsGameOverlay winnerName={winnerName} playersList={playersList} roomID={gameId} />
                         :
-                        <section className={`w-full h-full lg:w-[80%] lg:h-[60%] bg-center justify-center mt-9o
+                        <>
+
+                            <section className={`w-full h-full lg:w-[80%] lg:h-[60%] bg-center justify-center mt-9o
                  flex content-center z-10 relative fade-in  backdrop-blur`}
-                            style={(window.innerWidth > 768) ? { transform: `scale(${scaleRatio})` } : null}
-                        >
-                            <div className='absolute -top-[68px] left-[2%] lg:block hidden'>
-                                <BackButton to={"/"} roomID={null} />
-                            </div>
-                            <div className="w-20 absolute right-[15%] -top-[72px] lg:block hidden">
-                                <SoundButton />
-                            </div>
-                            <div className=' min-h-[70%] border-white/20 border bg-slate-50 bg-opacity-10 flex rounded-md backdrop-blur-sm lg:w-full w-full flex-col lg:flex-row lg:pt-0 pt-[38px]'>
-                                <PlayerList playersList={playersList} />
-                                <Canva playersList={playersList} givenHint={givenHint} />
-                                <Chat />
-                            </div>
-                        </section>
+                                style={(window.innerWidth > 768) ? { transform: `scale(${scaleRatio})` } : null}
+                            >
+                                <div className='absolute -top-[68px] left-[2%] lg:block hidden'>
+                                    <BackButton to={"/"} roomID={null} />
+                                </div>
+                                <div className="w-20 absolute right-[15%] -top-[72px] lg:block hidden">
+                                    <SoundButton />
+                                </div>
+                                <div className=' min-h-[70%] border-white/20 border bg-slate-50 bg-opacity-10 flex rounded-md backdrop-blur-sm lg:w-full w-full flex-col lg:flex-row lg:pt-0 pt-[38px]'>
+                                    <PlayerList playersList={playersList} />
+                                    <Canva playersList={playersList} givenHint={givenHint} />
+                                    <Chat />
+                                </div>
+                            </section>
+                        </>
                 }
                 <Paricules />
             </main >

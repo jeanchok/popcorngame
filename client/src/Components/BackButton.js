@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import { useSocket } from "../context/socket";
 import { useUser } from '.././context/user';
@@ -25,9 +25,26 @@ const BackButton = ({ to, roomID }) => {
         }
     }
 
-    const backTo = async (to) => {
-        window.location.href = '/';
+    const backTo = async (e) => {
+        const userConfirmation = window.confirm("Voulez-vous vraiment quitter le jeu ?");
+        if (userConfirmation) {
+            window.location.href = '/';
+        } else {
+            console.log("L'utilisateur a annulé l'action.");
+        }
     }
+
+    const handleBeforeUnload = (e) => {
+        e.preventDefault();
+        window.confirm('Voulez-vous vraiment quitter le jeu ?');
+    };
+
+    useEffect(() => {
+        window.addEventListener('beforeunload', handleBeforeUnload);
+        return () => {
+            window.removeEventListener('beforeunload', handleBeforeUnload);
+        };
+    }, []);
 
     return (
         <>
@@ -43,7 +60,7 @@ const BackButton = ({ to, roomID }) => {
                         </div>
                     </button>
                     :
-                    <button onClick={() => { backTo(to) }} className=" mb-4">
+                    <button onClick={(e) => { backTo(e) }} className=" mb-4">
                         <div className='bg-white flex p-2 rounded  group hover:bg-neutral-900  transition'>
                             <img src="/img/angle-de-la-fleche-pointant-vers-la-gauche.png" className='w-8 pr-2 group-hover:hidden transition' alt="flêche" />
                             <img src="/img/angle-de-la-fleche-pointant-vers-la-gauche-white.png" className='w-8 pr-2 hidden transition group-hover:block' alt="flêche" />

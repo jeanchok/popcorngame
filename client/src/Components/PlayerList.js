@@ -11,7 +11,7 @@ const PlayerList = ({ playersList }) => {
                         {playersList.map((player, index) =>
                             <li key={index} className='lg:rounded-l-full rounded-lg items-center lg:min-h-[60px] lg:mb-2 w-[80px] lg:w-[95%] lg:h-14 bg-transparent border-white lg:border mr-2 flex flex-col lg:flex-row h-full'>
                                 <div className='rounded-full w-14 m-auto overflow-hidden lg:h-[95%] h-1/2 flex lg:block'>
-                                    <img className='object-cover bg w-full' src={`./img/avatars/${avatars[player.playerAvatarIndex]}.jpg`} alt={avatars[player.playerAvatarIndex]} />
+                                    <img className='object-cover bg w-full h-full' src={`./img/avatars/${avatars[player.playerAvatarIndex]}.jpg`} alt={avatars[player.playerAvatarIndex]} />
                                 </div>
                                 <div className='w-[80%] lg:pl-2 flex flex-col lg:block '>
                                     <h3 className='text-white lg:m-auto text-center lg:text-left items-center mr-4 truncate pt-0'>{player.name}</h3>

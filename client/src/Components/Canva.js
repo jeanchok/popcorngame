@@ -266,7 +266,7 @@ const Canva = ({ playersList, givenHint }) => {
                             null
             }</h2>
             <div className='flex flex-col justify-between w-full relative h-inherit'>
-                <div className=' flex flex-row m-auto justify-center align-center items-center w-full h-full relative' >
+                <div className=' flex flex-row m-auto justify-center align-center items-center w-full h-full relative'>
                     {isChoosingWord ?
                         <div className={"flex align-center justify-center md:h-[250px] md:w-[450px] w-[90%] rounded-xl bg-neutral-800 z-10 absolute "}>
                             <div className="flex flex-col  align-center justify-center  gap-y-4 p-4">
@@ -297,65 +297,67 @@ const Canva = ({ playersList, givenHint }) => {
                     }
                     {
                         isThedrawer && !isChoosingWord ?
-                            <canvas className="w-full h-full bg-white"
+                            <canvas className="w-full h-full bg-slate-50"
                                 ref={canvasRef}
                             />
                             :
-                            <canvas className="h-full w-full bg-white"
+                            <canvas className="h-full w-full bg-slate-50"
                                 ref={canvasRef}
                                 style={{ pointerEvents: "none" }}
                             />
                     }
                 </div>
             </div>
-            {
-                isThedrawer ?
-                    <div className="bg-white flex space-around justify-center items-center border-t-2 border-red-400 bottom-0 w-full h-[42px]">
-                        <div className="md:flex items-center justify-center hidden">
-                            <div className={"p-4 m-1 bg-" + currentColor} style={{ backgroundColor: currentColor }} >
+            <div className="bg-white flex space-around justify-center items-center border-t-2 border-red-400 relative w-full h-[42px]">
+                {
+                    isThedrawer ?
+                        <>
+                            <div className="md:flex items-center justify-center hidden">
+                                <div className={"p-4 m-1 bg-" + currentColor} style={{ backgroundColor: currentColor }} >
+                                </div>
                             </div>
-                        </div>
-                        <div className="flex items-center justify-center h-full flex-col">
-                            <div className="flex flex-raw">
-                                {colors1.map(color => (
-                                    <button onClick={() => { changeColor(color.value); setCurrentColor(color.value) }} value={color.value} className={`bg-${color.name} p-2 color ${color.value}`} style={{ backgroundColor: color.value }}></button>
-                                ))}
+                            <div className="flex items-center justify-center h-full flex-col">
+                                <div className="flex flex-raw">
+                                    {colors1.map(color => (
+                                        <button key={color.value} onClick={() => { changeColor(color.value); setCurrentColor(color.value) }} value={color.value} className={`bg-${color.name} p-2 color ${color.value}`} style={{ backgroundColor: color.value }}></button>
+                                    ))}
+                                </div>
+                                <div className="flex flex-raw">
+                                    {colors2.map(color => (
+                                        <button key={color.value} onClick={() => { changeColor(color.value); setCurrentColor(color.value) }} value={color.value} className={`bg-${color.name} p-2 color ${color.value}`} style={{ backgroundColor: color.value }}></button>
+                                    ))}
+                                </div>
                             </div>
-                            <div className="flex flex-raw">
-                                {colors2.map(color => (
-                                    <button onClick={() => { changeColor(color.value); setCurrentColor(color.value) }} value={color.value} className={`bg-${color.name} p-2 color ${color.value}`} style={{ backgroundColor: color.value }}></button>
-                                ))}
-                            </div>
-                        </div>
-                        <div className="flex items-center justify-center">
-                            <button className=" m-1 w-8">
-                                <img className='w-full h-full' src=".\img\icons8-crayon-64.png" alt="logo crayon" />
-                            </button>
-                        </div>
-                        <div className="md:flex items-center justify-center hidden">
-                            <button onClick={() => { changeColor('white'); setCurrentColor('white') }} className=" m-1 w-8">
-                                <img className='w-full h-full' src=".\img\icons8-eraser-64.png" alt="logo gomme" />
-                            </button>
-                        </div>
-                        {lineWidths.map((item) => (
-                            <div key={item.lineWidth} className="flex items-center justify-center">
-                                <button
-                                    onClick={() => changeLineWidth(item.lineWidth)}
-                                    className="m-1 w-8 h-8 flex items-center justify-center"
-                                >
-                                    <div className={`rounded-full bg-black ${item.circleSize}`}></div>
+                            <div className="flex items-center justify-center">
+                                <button className=" m-1 w-8">
+                                    <img className='w-full h-full' src=".\img\icons8-crayon-64.png" alt="logo crayon" />
                                 </button>
                             </div>
-                        ))}
-                        <div className="flex items-center justify-center">
-                            <button className=" m-1 w-8" onClick={() => clearCanvas()}>
-                                <img className='w-full h-full' src=".\img\icons8-bin-60.png" alt="logo poubelle" />
-                            </button>
-                        </div>
-                    </div>
-                    :
-                    null
-            }
+                            <div className="md:flex items-center justify-center hidden">
+                                <button onClick={() => { changeColor('white'); setCurrentColor('white') }} className=" m-1 w-8">
+                                    <img className='w-full h-full' src=".\img\icons8-eraser-64.png" alt="logo gomme" />
+                                </button>
+                            </div>
+                            {lineWidths.map((item) => (
+                                <div key={item.lineWidth} className="flex items-center justify-center">
+                                    <button
+                                        onClick={() => changeLineWidth(item.lineWidth)}
+                                        className="m-1 w-8 h-8 flex items-center justify-center"
+                                    >
+                                        <div className={`rounded-full bg-black ${item.circleSize}`}></div>
+                                    </button>
+                                </div>
+                            ))}
+                            <div className="flex items-center justify-center">
+                                <button className=" m-1 w-8" onClick={() => clearCanvas()}>
+                                    <img className='w-full h-full' src=".\img\icons8-bin-60.png" alt="logo poubelle" />
+                                </button>
+                            </div>
+                        </>
+                        :
+                        null
+                }
+            </div>
         </div>
     );
 };

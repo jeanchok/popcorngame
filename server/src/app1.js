@@ -53,6 +53,7 @@ io.on("connection", (socket) => {
     socket.on('startGame', async () => { await new Game(io, socket).startGame(); });
     socket.on('getPlayers', async (roomID) => { await new Game(io, socket).getPlayers(roomID); });
     socket.on('message', (data) => new Game(io, socket).onMessage(data));
+    socket.on('everybodyGuessed', () => new Game(io, socket).onMessage());
     socket.on('disconnect', () => new Game(io, socket).onDisconnect());
     socket.on('disconnect', () => new Room(io, socket).onDisconnect());
     socket.on('draw', (data) => new Canvas(io, socket).draw(data));

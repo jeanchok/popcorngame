@@ -9,7 +9,6 @@ const ResultsGameOverlay = ({ winnerName, playersList, roomID }) => {
     const user = useUser();
     const [socket] = useSocket();
     const [hostRestartedToRoom, setHostRestartedToRoom] = useState(false);
-    let isHosting = sessionStorage.getItem('isHosting');
 
     useEffect(() => {
         const restartToRoom = (data) => {
@@ -27,7 +26,7 @@ const ResultsGameOverlay = ({ winnerName, playersList, roomID }) => {
         <div className='bg-black/80 fixed z-20 h-full w-full flex items-center justify-center flex-col gap-2'>
             <BackButton to={"/"} roomID={roomID} />
             {
-                isHosting === '1' ?
+                user.isHosting ?
                     <BackButton to={"/room"} roomID={roomID} />
                     :
                     hostRestartedToRoom ?

@@ -61,7 +61,6 @@ function get3Words(roomID) {
     while (pickedWords.length !== 3) {
         const randIndex = Math.floor(Math.random() * words.fr.length);
         pickedWords.push(words.fr[randIndex]);
-
     }
     return Array.from(pickedWords);
 }

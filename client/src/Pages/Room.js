@@ -33,7 +33,21 @@ const Room = () => {
     const userRef = useRef(null);
     const [gameId, setGameId] = useState(user.gameId);
 
-    let countDownSound = new Audio("/sounds/coutdown-start.mp3")
+    useEffect(() => {
+        const countDownSound = new Audio("/sounds/coutdown-start.mp3");
+        if (startSound && soundOn) {
+            countDownSound.play()
+        }
+        // Perform any necessary setup, e.g., event listeners, play, etc.
+
+        return () => {
+            // Clean up when the component unmounts or when a relevant prop changes
+            countDownSound.remove();
+        };
+    }, [startSound && soundOn]);
+
+
+    //let countDownSound = new Audio("/sounds/coutdown-start.mp3")
     //let countDownSoundOgg = new Audio("/sounds/coutdown-start.ogg")
 
     useEffect(() => {
@@ -164,9 +178,9 @@ const Room = () => {
         };
     }, [socket]);
 
-    if (startSound && soundOn) {
-        countDownSound.play();
-    }
+    // if (startSound && soundOn) {
+    //     countDownSound.play();
+    // }
 
     useEffect(() => {
         const startPicass = async (data) => {
@@ -220,7 +234,7 @@ const Room = () => {
                                         <button className='rounded-md bg-white hover:bg-red-500 text-red-500 font-semibold hover:text-white py-2 px-4 hover:border-transparent mt-4 w-1/3 transition relative flex justify-center' type='submit' value='Démarrer' onClick={copyLink}>INVITER
                                             {
                                                 toggleBubleCopyLink ?
-                                                    <div className='text-white p-1 absolute -bottom-8 left-[25%]'>
+                                                    <div className='text-white p-1 absolute -bottom-10 left-[10%] lg:-bottom-8 lg:left-[25%]'>
                                                         <p>Lien Copié !</p>
                                                     </div>
                                                     : null
