@@ -8,7 +8,7 @@ const Timer = ({ updateGivenHint }) => {
     const [time, setTime] = useState(0);
     const [seconds, setSeconds] = useState(0);
     const [gamelaunched, setGamelaunched] = useState(false)
-    //const [switchColorTimer, setSwitchColorTimer] = useState(false);
+    const [switchColorTimer, setSwitchColorTimer] = useState(false);
     const soundOn = useSoundOn();
 
     useEffect(() => {
@@ -70,49 +70,15 @@ const Timer = ({ updateGivenHint }) => {
         return () => clearInterval(interval);
     }, []);
 
-    // let nIntervId;
+    const flashText = () => {
+        setSwitchColorTimer(!switchColorTimer);
+    }
 
-    // const changeColor = () => {
-    //     if (!nIntervId) {
-    //         nIntervId = setInterval(flashText, 1000);
-    //     }
-    // }
-    // const changeColor = () => {
-    //     if (!nIntervId && seconds < 6) {
-    //         nIntervId = setInterval(flashText, 1000);
-    //     }
-    //     //  if (seconds === 0) {
-    //     //     clearInterval(nIntervId);
-    //     //     nIntervId = null;
-    //     // }
-    // };
-
-    // const flashText = () => {
-    //     switchColorTimer ? setSwitchColorTimer(false) : setSwitchColorTimer(true)
-    // }
-
-    // useEffect(() => {
-    //     changeColor();
-    // }, [seconds < 6]);
-
-    // if (seconds === 1) {
-    //     clearInterval(nIntervId);
-    //     nIntervId = null;
-    // }
-
-    // if (seconds < 6) {
-    //     changeColor();
-    // }
-
-    // if (seconds === 5 && soundOn) {
-    //     secLeft.play()
-    // }
-
-    // if (seconds === 1) {
-    //     clearInterval(nIntervId);
-    //     nIntervId = null;
-    //     //        secLeft.remove();
-    // }
+    useEffect(() => {
+        if (seconds < 6) {
+            flashText()
+        }
+    }, [seconds]);
 
     return (
         <>
@@ -120,10 +86,13 @@ const Timer = ({ updateGivenHint }) => {
                 time > 0 ?
                     (seconds >= 0) ?
                         <div className={
-                            'flex justify-center mb-2 mt-5 border border-white font-bold text-white py-1 px-2 text-xl z-20 bg-zinc-800 md:relative md:top-0 md:left-0 absolute top-[65%] left-[2%]'
+                            switchColorTimer ?
+                                'flex justify-center mb-2 mt-5 border border-zinc-800 font-bold text-zinc-800 py-1 px-2 text-xl z-20 bg-white md:relative md:top-0 md:left-0 absolute top-[65%] left-[2%]'
+                                :
+                                'flex justify-center mb-2 mt-5 border border-white font-bold text-white py-1 px-2 text-xl z-20 bg-zinc-800 md:relative md:top-0 md:left-0 absolute top-[65%] left-[2%]'
                         }>
                             {seconds}
-                        </div>
+                        </div >
                         : <div className='md:flex justify-center mb-2 mt-5 h-[41px] py-1 px-2 text-xl hidden'></div>
                     : <div className=' justify-center mb-2 mt-5 h-[41px] py-1 px-2 text-xl md:flex hidden'></div>
             }

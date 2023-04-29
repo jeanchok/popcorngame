@@ -7,10 +7,10 @@ const Chat = () => {
     const [message, setMessage] = useState("");
     const [round, setRound] = useState(1);
     const [messageReceived, setMessageReceived] = useState([]);
-    const playerUsername = sessionStorage.getItem('name');
     const bottomRef = useRef(null);
     const user = useUser();
     const [roomId, setRoomId] = useState(user.gameId);
+    const playerUsername = user.name;
 
     useEffect(() => {
         setRoomId(user.gameId);
