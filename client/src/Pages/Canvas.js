@@ -122,7 +122,7 @@ export function Canvas() {
                 <div className="lg:block hidden">
                     <Header />
                 </div>
-                <img className='object-cover absolute h-screen w-screen bg-object bg-cover -z-10 top-0' src=".\img\fondpop.png" alt="popcorn rouge fond" />
+                <img className='object-cover absolute h-full lg:h-screen w-screen bg-object bg-cover -z-10 top-0' src=".\img\fondpop.png" alt="popcorn rouge fond" />
                 <div className='bg-black/25 w-screen h-2/4 -z-10 absolute top-0'></div>
                 <Timer updateGivenHint={updateGivenHint} />
 
@@ -142,7 +142,7 @@ export function Canvas() {
                                 <div className="w-20 absolute right-[15%] -top-[72px] lg:block hidden">
                                     <SoundButton />
                                 </div>
-                                <div className=' min-h-[70%] border-white/20 border bg-slate-50 bg-opacity-10 flex rounded-md backdrop-blur-sm lg:w-full w-full flex-col lg:flex-row lg:pt-0 pt-[38px]'>
+                                <div className=' min-h-[70%] border-white/20 border bg-slate-50 bg-opacity-10 flex rounded-md backdrop-blur-sm lg:w-full w-full flex-col lg:flex-row lg:pt-0'>
                                     <PlayerList playersList={playersList} />
                                     <Canva playersList={playersList} givenHint={givenHint} />
                                     <Chat />
