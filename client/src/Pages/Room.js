@@ -46,10 +46,6 @@ const Room = () => {
         };
     }, [startSound && soundOn]);
 
-
-    //let countDownSound = new Audio("/sounds/coutdown-start.mp3")
-    //let countDownSoundOgg = new Audio("/sounds/coutdown-start.ogg")
-
     useEffect(() => {
         playerRef.current = players
     }, [players, startCountdownOverlay]);
@@ -152,7 +148,7 @@ const Room = () => {
                 socket.sentMydata = true;
             }
         }
-        if (selectedGameId === 2 || selectedGameId === 3) {
+        if (selectedGameId != 1) {
             setGameErrorMessage(`Le jeux sélectionné n'est pas encore disponible`)
         }
     }
@@ -169,7 +165,7 @@ const Room = () => {
             await setStartCountdownOverlay(true);
             setTimeout(() => {
                 startGame();
-            }, 1);
+            }, 3000);
         }
         socket.on('startCountdown', startCountdown);
 
@@ -177,10 +173,6 @@ const Room = () => {
             socket.off("startCountdown", startCountdown);
         };
     }, [socket]);
-
-    // if (startSound && soundOn) {
-    //     countDownSound.play();
-    // }
 
     useEffect(() => {
         const startPicass = async (data) => {

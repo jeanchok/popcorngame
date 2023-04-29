@@ -308,9 +308,9 @@ const Canva = ({ playersList, givenHint }) => {
                     }
                 </div>
             </div>
-            <div className="bg-white flex space-around justify-center items-center border-t-2 border-red-400 relative w-full h-[42px]">
-                {
-                    isThedrawer ?
+            {
+                isThedrawer ?
+                    <div className="bg-white flex space-around justify-center items-center border-t-2 border-red-400 relative w-full h-[42px]">
                         <>
                             <div className="md:flex items-center justify-center hidden">
                                 <div className={"p-4 m-1 bg-" + currentColor} style={{ backgroundColor: currentColor }} >
@@ -354,10 +354,10 @@ const Canva = ({ playersList, givenHint }) => {
                                 </button>
                             </div>
                         </>
-                        :
-                        null
-                }
-            </div>
+                    </div>
+                    :
+                    null
+            }
         </div>
     );
 };
