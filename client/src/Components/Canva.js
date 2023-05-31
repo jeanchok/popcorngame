@@ -297,11 +297,11 @@ const Canva = ({ playersList, givenHint }) => {
                     }
                     {
                         isThedrawer && !isChoosingWord ?
-                            <canvas className="w-full h-auto bg-slate-50 -mb-[44px] absolute top-0"
+                            <canvas className="w-full h-auto bg-slate-50 lg:-mb-[44px] lg:absolute lg:top-0"
                                 ref={canvasRef}
                             />
                             :
-                            <canvas className="h-full w-full bg-slate-50 -mb-[44px] absolute top-0"
+                            <canvas className="h-full w-full bg-slate-50 lg:-mb-[44px] lg:absolute lg:top-0"
                                 ref={canvasRef}
                                 style={{ pointerEvents: "none" }}
                             />
