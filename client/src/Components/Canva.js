@@ -359,8 +359,6 @@ const Canva = ({ playersList, givenHint }) => {
                 }
             </div>
             {/* <div className="flex space-around justify-center items-center w-full h-[0px]"></div> */}
-
-            <div className="bg-transparent flex space-around justify-center relative w-full items-end"></div>
         </div>
     );
 };
