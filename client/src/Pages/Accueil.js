@@ -18,7 +18,7 @@ const Accueil = () => {
                     <div className="w-20 absolute right-[15%] -top-[72px]">
                         <SoundButton />
                     </div>
-                    <div className='m-auto min-h-1/2 lg:h-full border-white/20 border bg-slate-50 bg-opacity-10 flex rounded-md blured' style={{ boxShadow: "inset 0px 2px 0px 0px rgb(255 255 255 / 15%), 0px 3px 0px 0px rgb(255 255 255 / 15%);" }}>
+                    <div className='min-h-1/2 lg:h-full border-white/20 border bg-slate-50 bg-opacity-10 flex rounded-md blured' style={{ boxShadow: "inset 0px 2px 0px 0px rgb(255 255 255 / 15%), 0px 3px 0px 0px rgb(255 255 255 / 15%);" }}>
                         <JoinGame />
                         <div className='w-2/3 bg-transparent md:block hidden'>
                             <h2 className='text-white border-white/20 border text-center pb-4 pt-4 h-[15%] border-red-400 border-l-2 text-xl font-semibold'>COMMENT JOUER ?</h2>
